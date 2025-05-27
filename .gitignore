@@ -5,3 +5,4 @@ session-store.db
 .env
 node_modules/
 backup.sql
+.idea/

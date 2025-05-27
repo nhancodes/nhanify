@@ -1,13 +1,22 @@
 const { DOMAIN, NHANCODES_ID } = process.env;
-const { NotFoundError, TooManyError } = require("../lib/errors.js");
+const {
+  NotFoundError,
+  TooManyError,
+  BadRequestError,
+} = require("../lib/errors.js");
 const MSG = require("../lib/msg.json");
 const { durationSecsToHHMMSS } = require("../lib/playlist.js");
 const { ForbiddenError } = require("../lib/errors.js");
 const MAX_API_REQUEST = 900;
+
 async function apiAuth(req, res, next) {
   const { authorization, "user-id": userId } = req.headers;
   const persistence = req.app.locals.persistence;
-  const response = await persistence.decryptedApiKey(+userId);
+  const userIdNum = +userId;
+  if (Number.isNaN(userIdNum) || !Number.isInteger(userIdNum)) {
+    throw new BadRequestError();
+  }
+  const response = await persistence.decryptedApiKey(userIdNum);
   if (!response) throw new ForbiddenError();
   const { decrypted_api_key: decryptedApiKey } = response;
   if (`Bearer ${decryptedApiKey}` !== authorization) throw new ForbiddenError();
@@ -16,6 +25,7 @@ async function apiAuth(req, res, next) {
   if (!request) throw new TooManyError();
   next();
 }
+
 async function apiAuthStream(req, res, next) {
   const { authorization } = req.headers;
   const persistence = req.app.locals.persistence;
@@ -27,6 +37,7 @@ async function apiAuthStream(req, res, next) {
   }
   next();
 }
+
 function requireAuth(req, res, next) {
   if (!req.session.user) {
     const requestURL = encodeURIComponent(req.originalUrl);

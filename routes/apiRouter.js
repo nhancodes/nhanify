@@ -26,7 +26,7 @@ apiRouter.get(
   catchError(apiAuth),
   catchError(async (req, res) => {
     const persistence = req.app.locals.persistence;
-    const playlists = await persistence.getPublicPlaylistsPage(0, 1000);
+    const playlists = await persistence.getPublicPlaylistsPage(0, 50);
     const formattedData = playlists.map((playlist) => {
       return {
         id: playlist.id,
