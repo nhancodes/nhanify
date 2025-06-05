@@ -1,9 +1,9 @@
 const { Router } = require("express");
 const songsRouter = Router();
-const { requireAuth } = require("./middleware.js");
+const { requireAuth } = require("./middleware.ts");
 const catchError = require("./catch-error.js");
 const { NotFoundError, ForbiddenError } = require("../lib/errors.js");
-const { getPlaylist } = require("./middleware.js");
+const { getPlaylist } = require("./middleware.ts");
 const { body, validationResult } = require("express-validator");
 const { isValidURL, getVidInfo } = require("../lib/playlist.js");
 const { YT_API_KEY } = process.env;

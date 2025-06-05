@@ -1,7 +1,7 @@
 const { CLIENT_SECRET, REDIRECT_URI, CLIENT_ID } = process.env;
 const { Router } = require("express");
 const authRouter = Router();
-const { requireAuth } = require("./middleware.js");
+const { requireAuth } = require("./middleware.ts");
 const catchError = require("./catch-error");
 const MSG = require("../lib/msg.json");
 // Get the home page.

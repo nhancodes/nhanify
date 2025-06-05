@@ -1,10 +1,10 @@
 const { Router } = require("express");
 const { v7: uuidv7 } = require("uuid");
 const playlistsRouter = Router();
-const { requireAuth } = require("./middleware.js");
+const { requireAuth } = require("./middleware.ts");
 const catchError = require("./catch-error.js");
 const { NotFoundError, ForbiddenError } = require("../lib/errors.js");
-const { getPlaylists, getPlaylist } = require("./middleware.js");
+const { getPlaylists, getPlaylist } = require("./middleware.ts");
 const { body, validationResult } = require("express-validator");
 const PLAYLISTS_PER_PAGE = 10;
 const MSG = require("../lib/msg.json");

@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const contributorsRouter = Router();
-const { requireAuth } = require("./middleware.js");
+const { requireAuth } = require("./middleware.ts");
 const catchError = require("./catch-error.js");
 const { NotFoundError, ForbiddenError } = require("../lib/errors.js");
 const { body, validationResult } = require("express-validator");
