@@ -1,4 +1,4 @@
-const { apiAuth } = require("./middleware.ts");
+const { apiAuth } = require("./middleware");
 const { BadRequestError } = require("../lib/errors");
 
 describe("apiRouter", () => {
