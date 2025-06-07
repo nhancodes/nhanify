@@ -13,7 +13,12 @@ async function apiAuth(req, res, next) {
   const { authorization, "user-id": userId } = req.headers;
   const persistence = req.app.locals.persistence;
   const userIdNum = +userId;
-  if (Number.isNaN(userIdNum) || !Number.isInteger(userIdNum)) {
+  if (
+    !authorization ||
+    !userId ||
+    Number.isNaN(userIdNum) ||
+    !Number.isInteger(userIdNum)
+  ) {
     throw new BadRequestError();
   }
   const response = await persistence.decryptedApiKey(userIdNum);

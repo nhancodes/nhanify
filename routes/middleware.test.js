@@ -2,37 +2,81 @@ const { apiAuth } = require("./middleware");
 const { BadRequestError } = require("../lib/errors");
 
 describe("apiRouter", () => {
-  test("get public playlist with alpha character client id", async () => {
-    const req = {
-      app: {
-        locals: {
-          persistence: undefined,
+  const baseReq = {
+    app: {
+      locals: {
+        persistence: undefined,
+      },
+    },
+  };
+  test.concurrent.each([
+    //auth with empty string athorizations
+    [
+      {
+        ...baseReq,
+        headers: {
+          "user-id": "13",
+          authorization: "",
         },
       },
-      headers: {
-        "user-id": "invalid",
-        authorization: "randomstring",
-      },
-    };
-    await expect(async () => {
-      await apiAuth(req, {});
-    }).rejects.toThrow(BadRequestError);
-  });
-
-  test("get public playlist with float client id", async () => {
-    const req = {
-      app: {
-        locals: {
-          persistence: undefined,
+      {},
+    ],
+    //auth with no authorization
+    [
+      {
+        ...baseReq,
+        headers: {
+          "user-id": "13",
         },
       },
-      headers: {
-        "user-id": "1.5",
-        authorization: "randomstring",
+      {},
+    ],
+    //auth with no user-id
+    [
+      {
+        ...baseReq,
+        headers: {
+          authorization: "randomstring",
+        },
       },
-    };
+      {},
+    ],
+    //auth with empty string
+    [
+      {
+        ...baseReq,
+        headers: {
+          "user-id": "",
+          authorization: "randomstring",
+        },
+      },
+      {},
+    ],
+    //auth with alpha string user-id
+    [
+      {
+        ...baseReq,
+        headers: {
+          "user-id": "invalid",
+          authorization: "randomstring",
+        },
+      },
+      {},
+    ],
+    //auth with float string user-id
+    [
+      {
+        ...baseReq,
+        headers: {
+          "user-id": "13.44",
+          authorization: "randomstring",
+        },
+      },
+      {},
+    ],
+  ])("bad auth requests %o", async (req, res) => {
     await expect(async () => {
-      await apiAuth(req, {});
+      await apiAuth(req, res);
     }).rejects.toThrow(BadRequestError);
   });
 });
