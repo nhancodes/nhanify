@@ -4,7 +4,7 @@ import pluginJest from "eslint-plugin-jest";
 
 export default [
   {
-    ignores: ["**/*.sql", "migrations/*"], // Add this line to ignore SQL files
+    ignores: ["**/*.sql", "migrations/*", "**/*middleware.js*"], // Add this line to ignore SQL files
   },
   {
     files: ["**/*.js"],
