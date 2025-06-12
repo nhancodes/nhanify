@@ -8,6 +8,7 @@ const {
   TooManyError,
   NotFoundError,
   ForbiddenError,
+  BadRequestError,
 } = require("../lib/errors.js");
 const { YT_API_KEY } = process.env;
 const { getVidInfo, durationSecsToHHMMSS } = require("../lib/playlist.js");
@@ -21,93 +22,97 @@ apiRouter.get("/debug-sentry", function mainHandler(_req, _res) {
   throw new Error("My first Sentry error!");
 });
 
+const getPublicPlaylists = async (req, res) => {
+  const persistence = req.app.locals.persistence;
+  const playlists = await persistence.getPublicPlaylistsPage(0, 50);
+  const formattedData = playlists.map((playlist) => {
+    return {
+      id: playlist.id,
+      title: playlist.title,
+      creator: { id: playlist.creator_id, username: playlist.username },
+      isPrivate: playlist.private,
+      songCount: +playlist.count,
+    };
+  });
+  res.json({ playlists: formattedData });
+};
+
+const getPlaylist = async (req, res) => {
+  const persistence = req.app.locals.persistence;
+  const playlist = await persistence.getPlaylist(req.params.id);
+  if (!playlist) {
+    res.status(404).json({ error: "404" });
+    return;
+  }
+  const result = await persistence.getPlaylistInfoSongs(req.params.id, 0, 100);
+  const info = result.info;
+  const songs = result.songs.map((song) => {
+    return {
+      id: song.id,
+      title: song.title,
+      videoId: song.video_id,
+      addedBy: song.username,
+      durationSec: song.duration_sec,
+    };
+  });
+
+  res.json({
+    id: +req.params.id,
+    title: info.title,
+    creatorId: info.creator_id,
+    isPrivate: info.private,
+    songCount: result.songTotal,
+    songs,
+  });
+};
+
 apiRouter.get(
   "/playlists/public",
   catchError(apiAuth),
-  catchError(async (req, res) => {
-    const persistence = req.app.locals.persistence;
-    const playlists = await persistence.getPublicPlaylistsPage(0, 50);
-    const formattedData = playlists.map((playlist) => {
-      return {
-        id: playlist.id,
-        title: playlist.title,
-        creator: { id: playlist.creator_id, username: playlist.username },
-        isPrivate: playlist.private,
-        songCount: +playlist.count,
-      };
-    });
-    res.json({ playlists: formattedData });
-  }),
+  catchError(getPublicPlaylists),
 );
 
-apiRouter.get(
-  "/playlists",
-  catchError(apiAuth),
-  catchError(async (req, res) => {
-    const persistence = req.app.locals.persistence;
-    const ids =
-      typeof req.query.id === "string" ? [req.query.id] : req.query.id;
-    const queryParams = ids.reduce((accum, id) => {
-      if (!Number.isNaN(Number(id)) && +id >= 1) accum.push(+id);
-      return accum;
-    }, []);
-    console.log(queryParams);
-    const playlists = await persistence.getPlaylistsByIdPage(queryParams);
-    console.log({ playlists });
-    const formattedData = playlists.map((playlist) => {
-      return {
-        id: playlist.id,
-        title: playlist.title,
-        creator: { id: playlist.creator_id, username: playlist.username },
-        isPrivate: playlist.private,
-        songCount: +playlist.count,
-      };
-    });
-    res.json({ playlists: formattedData });
-  }),
-);
+const getPlaylistsByIds = async (req, res) => {
+  const persistence = req.app.locals.persistence;
+  const ids = typeof req.query.id === "string" ? [req.query.id] : req.query.id;
 
-apiRouter.get(
-  "/playlists/:id",
-  catchError(apiAuth),
-  catchError(async (req, res) => {
-    const persistence = req.app.locals.persistence;
-    const playlist = await persistence.getPlaylist(req.params.id);
-    if (!playlist) {
-      res.status(404).json({ error: "404" });
-      return;
-    }
-    const result = await persistence.getPlaylistInfoSongs(
-      req.params.id,
-      0,
-      100,
-    );
-    const info = result.info;
-    const songs = result.songs.map((song) => {
-      return {
-        id: song.id,
-        title: song.title,
-        videoId: song.video_id,
-        addedBy: song.username,
-        durationSec: song.duration_sec,
-      };
-    });
+  const queryParams = ids.reduce((accum, id) => {
+    if (!Number.isNaN(+id) && Number.isInteger(+id) && +id >= 0 && id !== "")
+      accum.push(+id);
+    return accum;
+  }, []);
+  console.log(queryParams);
+  if (queryParams.length === 0) return res.json({ playlists: [] });
+  const playlists = await persistence.getPlaylistsByIdPage(queryParams);
+  console.log({ playlists });
+  const formattedData = playlists.map((playlist) => {
+    return {
+      id: playlist.id,
+      title: playlist.title,
+      creator: { id: playlist.creator_id, username: playlist.username },
+      isPrivate: playlist.private,
+      songCount: +playlist.count,
+    };
+  });
+  res.json({ playlists: formattedData });
+};
+apiRouter.get("/playlists", catchError(apiAuth), catchError(getPlaylistsByIds));
 
-    res.json({
-      id: +req.params.id,
-      title: info.title,
-      creatorId: info.creator_id,
-      isPrivate: info.private,
-      songCount: result.songTotal,
-      songs,
-    });
-  }),
-);
+apiRouter.get("/playlist/:id", catchError(apiAuth), catchError(getPlaylist));
 
 apiRouter.get(
   "/users/:id",
   catchError(apiAuth),
   catchError(async (req, res) => {
+    const id = req.params.id;
+    if (
+      !id ||
+      id === "" ||
+      Number.isNaN(+id) ||
+      !Number.isInteger(+id) ||
+      +id > 0
+    )
+      throw new BadRequestError();
     const persistence = req.app.locals.persistence;
     const user = await persistence.getUserById(+req.params.id);
     console.log({ user });
@@ -201,6 +206,7 @@ apiRouter.post(
     }
   }),
 );
+
 apiRouter.get("/event", (req, res) => {
   console.log("IN EVENT");
   res.setHeader("Content-Type", "text/event-stream");
@@ -238,9 +244,11 @@ apiRouter.use((err, req, res, _next) => {
     res.status(404).json({ error: "404" });
   } else if (err instanceof TooManyError) {
     res.status(429).json({ error: "429" });
+  } else if (err instanceof BadRequestError) {
+    res.status(400).json({ error: "400" });
   } else {
     if (isProduction) Sentry.captureException(err);
     res.status(500).json({ error: "500" });
   }
 });
-module.exports = { apiRouter };
+module.exports = { apiRouter, getPlaylistsByIds };
