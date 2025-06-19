@@ -78,7 +78,7 @@ describe("api auth middleware", () => {
       },
       {},
     ],
-  ])("bad auth requests %o", async (req, res) => {
+  ])("invalid headers for auth %o", async (req, res) => {
     await expect(async () => {
       await apiAuth(req, res);
     }).rejects.toThrow(BadRequestError);

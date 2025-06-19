@@ -15,12 +15,7 @@ const { getVidInfo, durationSecsToHHMMSS } = require("../lib/playlist.js");
 const catchError = require("./catch-error.js");
 const { apiAuth } = require("./middleware.ts");
 let clients = [];
-
 apiRouter.use(json());
-
-apiRouter.get("/debug-sentry", function mainHandler(_req, _res) {
-  throw new Error("My first Sentry error!");
-});
 
 const getPublicPlaylists = async (req, res) => {
   const persistence = req.app.locals.persistence;
@@ -38,12 +33,13 @@ const getPublicPlaylists = async (req, res) => {
 };
 
 const getPlaylist = async (req, res) => {
-  const persistence = req.app.locals.persistence;
-  const playlist = await persistence.getPlaylist(req.params.id);
-  if (!playlist) {
-    res.status(404).json({ error: "404" });
-    return;
+  const id = req.params.id;
+  if( id === "" || Number.isNaN(+id) || !Number.isInteger(+id) || +id < 0 ) {
+    throw new BadRequestError();
   }
+  const persistence = req.app.locals.persistence;
+  const playlist = await persistence.getPlaylist(+id);
+  if (!playlist) throw new NotFoundError();
   const result = await persistence.getPlaylistInfoSongs(req.params.id, 0, 100);
   const info = result.info;
   const songs = result.songs.map((song) => {
@@ -66,12 +62,6 @@ const getPlaylist = async (req, res) => {
   });
 };
 
-apiRouter.get(
-  "/playlists/public",
-  catchError(apiAuth),
-  catchError(getPublicPlaylists),
-);
-
 const getPlaylistsByIds = async (req, res) => {
   const persistence = req.app.locals.persistence;
   const ids = typeof req.query.id === "string" ? [req.query.id] : req.query.id;
@@ -81,10 +71,8 @@ const getPlaylistsByIds = async (req, res) => {
       accum.push(+id);
     return accum;
   }, []);
-  console.log(queryParams);
   if (queryParams.length === 0) return res.json({ playlists: [] });
   const playlists = await persistence.getPlaylistsByIdPage(queryParams);
-  console.log({ playlists });
   const formattedData = playlists.map((playlist) => {
     return {
       id: playlist.id,
@@ -96,6 +84,13 @@ const getPlaylistsByIds = async (req, res) => {
   });
   res.json({ playlists: formattedData });
 };
+
+apiRouter.get(
+  "/playlists/public",
+  catchError(apiAuth),
+  catchError(getPublicPlaylists),
+);
+
 apiRouter.get("/playlists", catchError(apiAuth), catchError(getPlaylistsByIds));
 
 apiRouter.get("/playlist/:id", catchError(apiAuth), catchError(getPlaylist));
@@ -111,15 +106,12 @@ apiRouter.get(
       Number.isNaN(+id) ||
       !Number.isInteger(+id) ||
       +id > 0
-    )
+    ) {
       throw new BadRequestError();
+    }
     const persistence = req.app.locals.persistence;
     const user = await persistence.getUserById(+req.params.id);
-    console.log({ user });
-    if (!user) {
-      res.status(404).json({ error: "404" });
-      return;
-    }
+    if (!user) throw new NotFoundError();
     res.json({ username: user.username });
   }),
 );
@@ -128,24 +120,11 @@ apiRouter.post(
   "/playlist/addSong",
   catchError(apiAuth),
   catchError(async (req, res) => {
-    //check the API_KEY in nhanify and the passed in API_KEY
-    // make call to Youtube data api to get video
-    //parse for videoId from Yotube URL
-    //call to the database to add the song
-    /*const persistence = req.app.locals.persistence;
-    if (!isValidURL(req.body.url)) {
-      res.status(404).json({ msg: "invalid_url" });
-      return;
-    }*/
     const persistence = req.app.locals.persistence;
     const playlistTitle = "Saved Songs";
     let createdPlaylist;
     let user = await persistence.getUserIdByUsername(req.body.addedBy);
-    if (!user) {
-      res.status(403).json({ msg: "no_user_account" });
-      return;
-    }
-    console.log(req.body.addedBy); //lowercase
+    if (!user) throw new ForbiddenError();
     const playlist = await persistence.getPlaylistByUserPlaylistName(
       req.body.addedBy,
       playlistTitle,
@@ -160,38 +139,21 @@ apiRouter.post(
       console.log({ createdPlaylist });
     }
     const vidInfo = await getVidInfo(req.body.url, YT_API_KEY);
-    if (!vidInfo) {
-      res.status(404).json({ msg: "invalid_video_id" });
-      return;
-    }
+    if (!vidInfo) throw new NotFoundError("invalid_video_id");
     const playlistId = !createdPlaylist ? playlist.id : createdPlaylist.id;
-    try {
-      const song = await persistence.addSong(
-        vidInfo.title,
-        vidInfo.videoId,
-        playlistId,
-        user.id,
-        vidInfo.durationSecs,
-      );
-      if (song.rowCount === 0) {
-        res.status(403).json({ msg: "playlist_max_limit" });
-        return;
-      }
-    } catch (error) {
-      if (error.constraint === "unique_video_id_playlist_id") {
-        res.status(403).json({ msg: "duplicate_video_id" });
-        return;
-      }
-      throw error;
-    }
+    const song = await persistence.addSong(
+      vidInfo.title,
+      vidInfo.videoId,
+      playlistId,
+      user.id,
+      vidInfo.durationSecs,
+    );
+    if (song.rowCount === 0) throw new ForbiddenError("playlist_max_limit");
     //make a query for the added song in the playlist
     const addedSong = await persistence.getSong(vidInfo.videoId, playlistId);
     if (!addedSong) {
       throw new NotFoundError();
     } else {
-      console.log({ addedSong });
-      // a message to the bot
-      // song title, url[video]
       sendEvent({
         title: addedSong.title,
         videoId: addedSong.video_id,
@@ -200,9 +162,7 @@ apiRouter.post(
         addedBy: req.body.addedBy,
         duration: durationSecsToHHMMSS(addedSong.duration_sec),
       });
-      res.json({ msg: "success", song: addedSong });
-      // song title has been added to plsylist title
-      // url
+      res.json({ message: "success", song: addedSong });
     }
   }),
 );
@@ -238,17 +198,19 @@ apiRouter.use("*", (req, res, next) => {
 });
 apiRouter.use((err, req, res, _next) => {
   // do not remove next parameter
-  if (err instanceof ForbiddenError) {
-    res.status(403).json({ error: "403" });
+  if (err.constraint === "unique_video_id_playlist_id") {
+    res.status(403).json({ message: "duplicate_video_id" });
+  } else if (err instanceof ForbiddenError) {
+    res.status(403).json({ message: err.message });
   } else if (err instanceof NotFoundError) {
-    res.status(404).json({ error: "404" });
+    res.status(404).json({ message: err.message });
   } else if (err instanceof TooManyError) {
-    res.status(429).json({ error: "429" });
+    res.status(429).json({ message: err.message });
   } else if (err instanceof BadRequestError) {
-    res.status(400).json({ error: "400" });
+    res.status(400).json({ message: err.message });
   } else {
     if (isProduction) Sentry.captureException(err);
-    res.status(500).json({ error: "500" });
+    res.status(500).json({ message: "server_error" });
   }
 });
 module.exports = { apiRouter, getPlaylistsByIds };
