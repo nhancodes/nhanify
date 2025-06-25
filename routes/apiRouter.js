@@ -34,12 +34,13 @@ const getPublicPlaylists = async (req, res) => {
 
 const getPlaylist = async (req, res) => {
   const id = req.params.id;
-  if( id === "" || Number.isNaN(+id) || !Number.isInteger(+id) || +id < 0 ) {
+  if (id === "" || Number.isNaN(+id) || !Number.isInteger(+id) || +id < 0) {
     throw new BadRequestError();
   }
   const persistence = req.app.locals.persistence;
   const playlist = await persistence.getPlaylist(+id);
-  if (!playlist) throw new NotFoundError();
+  console.log("THE PLAYLIST", playlist);
+  if (!playlist) throw new NotFoundError("Playlist not found");
   const result = await persistence.getPlaylistInfoSongs(req.params.id, 0, 100);
   const info = result.info;
   const songs = result.songs.map((song) => {
@@ -111,7 +112,7 @@ apiRouter.get(
     }
     const persistence = req.app.locals.persistence;
     const user = await persistence.getUserById(+req.params.id);
-    if (!user) throw new NotFoundError();
+    if (!user) throw new NotFoundError("User not found");
     res.json({ username: user.username });
   }),
 );

@@ -24,7 +24,8 @@ async function apiAuth(req, res, next) {
   const response = await persistence.decryptedApiKey(userIdNum);
   if (!response) throw new ForbiddenError();
   const { decrypted_api_key: decryptedApiKey } = response;
-  if (`Bearer ${decryptedApiKey}` !== authorization) throw new ForbiddenError();
+  if (`Bearer ${decryptedApiKey}` !== authorization)
+    throw new ForbiddenError("Invalid authorization token.");
   // record the api request for user and current time/day
   const request = await persistence.addRequest(+userId, MAX_API_REQUEST);
   if (!request) throw new TooManyError();
