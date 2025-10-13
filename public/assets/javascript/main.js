@@ -1,7 +1,8 @@
 /* eslint-disable */
-function confirmSubmit(event, message) {
+export function confirmSubmit(event, message) {
   event.preventDefault();
-  if (confirm(message)) {
-    event.target.parentElement.submit();
+  if (confirm(message) && event.target) {
+    event.target.submit();
   }
 }
+//# sourceMappingURL=main.js.map

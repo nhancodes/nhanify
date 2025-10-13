@@ -4,7 +4,13 @@ import pluginJest from "eslint-plugin-jest";
 
 export default [
   {
-    ignores: ["**/*.sql", "migrations/*", "transpiledjs/*"], // Add this line to ignore SQL files
+    ignores: [
+      "**/*.sql",
+      "migrations/*",
+      "transpiledjs/*",
+      "public/assets/javascript/**/*",
+      "dist/**/*",
+    ], // Add this line to ignore SQL files
   },
   {
     files: ["**/*.js"],
@@ -12,6 +18,17 @@ export default [
       sourceType: "commonjs",
       globals: {
         ...globals.node,
+      },
+    },
+  },
+  // Add this configuration for ES modules (your compiled TypeScript)
+  {
+    files: ["public/assets/javascript/**/*.js"], // Target compiled files
+    languageOptions: {
+      sourceType: "module", // This is the key fix
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.browser,
       },
     },
   },

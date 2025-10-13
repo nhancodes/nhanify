@@ -1,0 +1,19 @@
+// tsconfig.frontend.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext", // CRUCIAL: Outputs JavaScript files as native ES Modules
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // CRUCIAL: Allows use of browser APIs
+
+    // Output Settings
+    "outDir": "./public/assets/javascript", // CRUCIAL: Sends compiled JS files to the public folder
+    "rootDir": "./src/frontend", // Where to find the source TS files
+
+    // Safety and Cleanup
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true // Recommended for debugging
+  },
+  "include": ["src/frontend/**/*"]
+}
