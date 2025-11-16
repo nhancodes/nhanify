@@ -1,0 +1,17 @@
+if (user !== undefined)
+	details.profileMenu 
+		summary 
+			i.fa-solid.fa-circle-user.menuIcon
+		.profileDropdown 
+			.menuItem
+				i.fa-solid.fa-user.menuIcon
+				p #{user.username}
+			.menuItem
+				i.fa-solid.fa-gear.menuIcon
+				p Settings
+			.menuItem
+				i.fa-solid.fa-right-from-bracket.menuIcon
+				p Sign Out
+else
+	a(href="/signin") Sign In
+		i.fa-solid.fa-bars.menuIcon

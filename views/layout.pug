@@ -5,44 +5,17 @@ html(lang="en")
     meta(charset="UTF-8" name="viewport", content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/assets/css/reset.css")
     link(rel="stylesheet" href="/assets/css/myStyle.css")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
     link(rel="preconnect" href="https://fonts.googleapis.com")
     link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
     link(href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet")
+    link(rel="stylesheet" href="/assets/css/nav_bar_profile_menu.css")
+    link(rel="stylesheet" href="/assets/css/player.css")
+    script(type="module" src="/assets/javascript/profile_menu.js" defer)
     script(type="module" src="/assets/javascript/index.js" defer)
   body
     .bWrap
-      .navTopWrap 
-        .stack1
-          .navTopLeft
-            .home
-              a(class="logo" href="/your/playlists/1") N
-            
-            if (user !== undefined)
-              p(class="username") #{user.username}
-          .navTopRight
-            if (user !== undefined)
-              form(class="buttonForm" action="/signout" method="post")
-                input(type="submit" value="Sign Out")
-            else
-              a(href="/signin") Sign In
-        .stack2  
-          if (user === undefined)
-            if (playlistType === "anonPublic")
-              a(class="hiNavTab" href=`/anon/public/playlists/1`) Public Playlists 
-            else
-              a(class="navTab" href=`/anon/public/playlists/1`) Public Playlists 
-          else
-            if (playlistType === "public")
-              a(class="hiNavTab" href=`/public/playlists/1`) Public Playlists 
-            else
-              a(class="navTab" href=`/public/playlists/1`) Public Playlists 
-            if (playlistType === "your")
-              a(class="hiNavTab" href="/your/playlists/1") Your Playlists 
-            else 
-              a(class="navTab" href="/your/playlists/1") Your Playlists 
-            if (playlistType === "contribution")
-              a(class="hiNavTab" href="/contribution/playlists/1") Contribution Playlists
-            else
-              a(class="navTab" href="/contribution/playlists/1") Contribution Playlists
+      include nav_bar
       main
           block main
+      include player

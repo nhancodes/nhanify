@@ -1,4 +1,25 @@
 /* global YT */
+
+// Add type declarations for YouTube API
+
+declare namespace YT {
+  class Player {
+    constructor(elementId: string, options: any);
+    loadVideoById(videoId: string): void;
+  }
+
+  enum PlayerState {
+    ENDED = 0,
+    PLAYING = 1,
+    PAUSED = 2,
+    BUFFERING = 3,
+    CUED = 5
+  }
+
+  interface OnStateChangeEvent {
+    data: number;
+  }
+}
 // 2. This code loads the IFrame Player API code asynchronously.
 export function initalizeIframe() {
   console.log("IN INITIALIZE IFRAME");

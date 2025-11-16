@@ -4,12 +4,14 @@ html {
 }
 
 :root {
-  --color-bg-dark: #0b2447;
-  --color-bg-light: white;
-  --color-tertiary: #19376d;
-  --color-secondary: #576cbc;
-  --color-primary: #a5d7e8;
-  --color-error: #c28c8c;
+  --color-bg-dark: #f5f5f0;
+  --color-bg-light: #fefefe;
+  --color-tertiary: #e8e8e3;
+  --color-secondary: #c9c9c4;
+  --color-primary: #8b9d83;
+  --color-accent: #a8b5a8;
+  --color-text: #333;
+  --color-error: #d4a5a5;
   --font-size-large: 3rem;
   --font-size-medium: 2rem;
   --font-size-small: 1rem;
@@ -28,6 +30,7 @@ html {
   margin-right: 3rem;
   flex-direction: column;
   row-gap: 1rem;
+  max-width: 980px;
 }
 
 /* layout */
@@ -35,13 +38,12 @@ body {
   display: flex;
   width: 100%;
   justify-content: center;
-  font-family: "Roboto", "sans-serif";
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   font-size: 1rem;
   text-align: center;
   background-color: var(--color-bg-dark);
-  color: white;
-  min-height: 100vh;
-  min-height: 100dvh;
+  color: var(--color-text);
+  max-height: 100dvh;
 }
 
 .btn {
@@ -52,15 +54,8 @@ body {
   display: flex;
   width: 100%;
   flex-direction: column;
-  align-items: center;
 }
 
-.navTopWrap {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-}
 
 .pageTitle {
   font-size: 2rem;
@@ -72,53 +67,26 @@ body {
   justify-content: center;
 }
 
-.signin {
-  border: medium solid var(--color-primary);
-  border-radius: 0.5rem;
-  width: fit-content;
-  padding: 1rem;
-}
-
-.stack1 {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  height: 4rem;
-  align-items: center;
-  width: 95%;
-}
-
-.navTopLeft {
-  display: flex;
-  flex-direction: row;
-  column-gap: 1rem;
-}
-
-.username {
-  color: var(--color-secondary);
-}
-
-.home {
-  background-color: var(--color-secondary);
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-}
-
 a {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.875rem;
+  font-weight: 400;
   text-decoration: none;
-  color: var(--color-secondary);
+  color: var(--color-text);
 }
 
-.logo {
-  color: white;
+a:hover {
+  color: var(--color-primary);
 }
 
 .navTopRight {
   display: flex;
   flex-direction: row;
   column-gap: 1rem;
+  position: relative;
+  margin-left: auto;
+  /* Add this line */
+  justify-content: flex-end;
+  /* And this line */
 }
 
 .hiNavTab {
@@ -134,13 +102,6 @@ a {
   border-radius: 1rem 1rem 0rem 0rem;
 }
 
-.stack2 {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 95%;
-  column-gap: 1rem;
-}
 
 footer {
   display: flex;
@@ -170,17 +131,18 @@ main {
   align-items: center;
   row-gap: 1rem;
   padding: 1rem 0;
+  position: relative;
+  overflow: auto;
 }
 
 .playlistsDiv {
   display: flex;
   flex-direction: column;
-  width: 60%;
   align-items: center;
   height: 100%;
-  min-width: 320px;
-  max-width: 700px;
   row-gap: 0.5rem;
+  width: 100%;
+  max-width: 980px;
 }
 
 #player {
@@ -200,13 +162,6 @@ main {
 
 .playerDiv {
   width: 100%;
-}
-
-.iframeDiv {
-  aspect-ratio: 16 / 9;
-  background-color: var(--color-bg-dark);
-  display: flex;
-  border-radius: 1rem;
 }
 
 .modDiv {
@@ -283,18 +238,18 @@ main {
 
 .editBtn {
   background: transparent url("../icons/edit.png") 50% 50% no-repeat;
-  background-size: 20px 20px;
+  background-size: 16px 16px;
   border: 0px;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 #shuffle {
   background: transparent url("../icons/shuffle.png") 50% 50% no-repeat;
-  background-size: 20px 20px;
+  background-size: 16px 16px;
   border: 0px;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 }
 
 .control {
@@ -450,13 +405,15 @@ main {
 }
 
 p {
-  font-size: 1rem;
   text-align: left;
-  color: white;
+  color: var(--color-text);
   align-self: center;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-wrap: auto;
 }
 
 .delete {

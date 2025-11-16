@@ -1,0 +1,37 @@
+.navTopWrap 
+  .stack1
+    .mainNav
+      .navTopLeft
+        .menuButton
+          i.fa-solid.fa-bars.menuIcon#navMenuIcon
+        a(href="/home") Nhanify
+      .center-align
+        a(href="/home") Home 
+        a(href="/playlists") Playlists 
+        //
+          if (user === undefined)
+            if (playlistType === "anonPublic")
+              a(class="hiNavTab" href=`/anon/public/playlists/1`) Public Playlists 
+            else
+              a(class="navTab" href=`/anon/public/playlists/1`) Public Playlists 
+          else
+            if (playlistType === "public")
+              a(class="hiNavTab" href=`/public/playlists/1`) Public Playlists 
+            else
+              a(class="navTab" href=`/public/playlists/1`) Public Playlists 
+            if (playlistType === "your")
+              a(class="hiNavTab" href="/your/playlists/1") Your Playlists 
+            else 
+              a(class="navTab" href="/your/playlists/1") Your Playlists 
+            if (playlistType === "contribution")
+              a(class="hiNavTab" href="/contribution/playlists/1") Contribution Playlists
+            else
+              a(class="navTab" href="/contribution/playlists/1") Contribution Playlists
+      .navTopRight
+        include profile_menu
+  .stack1
+    .profileMenu
+      .menuItem 
+        p Home
+      .menuItem 
+        p Playlists

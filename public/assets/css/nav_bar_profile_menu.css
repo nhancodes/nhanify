@@ -1,0 +1,212 @@
+/* profile menu */
+.profileMenu {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+    width: 100%;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.profileMenu summary {
+    list-style: none;
+    cursor: pointer;
+    color: var(--color-secondary);
+}
+
+.profileMenu summary:hover {
+    color: var(--color-primary);
+    opacity: 0.9;
+}
+
+.profileMenu summary::-webkit-details-marker {
+    display: none;
+}
+
+.profileMenu summary:hover .profileIcon {
+    color: var(--color-primary);
+}
+
+.profileIcon {
+    display: block;
+    color: var(--color-primary);
+}
+
+.profileDropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    background: var(--color-tertiary);
+    border: 1px solid var(--color-secondary);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+    min-width: 200px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    width: auto;
+    /* Change from 100% to auto */
+    box-sizing: border-box;
+    /* Ensure padding is included in width */
+}
+
+.profileMenu .menuItem:hover {
+    background: var(--color-secondary);
+}
+
+.menuIcon {
+    width: 18px;
+    text-align: center;
+}
+
+.center-align {
+    display: flex;
+    align-items: center;
+    column-gap: 2rem;
+    width: 100%;
+    justify-content: center;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.4s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Hide nav menu button by default */
+.menuButton {
+    display: none;
+}
+
+@media (min-width: 769px) {
+    .bWrap>.navTopWrap>.stack1:nth-of-type(2) {
+        display: none !important;
+    }
+}
+
+/* Show nav menu button only on screens 768px wide or less */
+@media (max-width: 768px) {
+    .menuButton {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .center-align {
+        display: none;
+    }
+}
+
+.mainNav {
+    display: flex;
+    width: 100%;
+    padding: 1rem;
+}
+
+.navTopWrap {
+    display: grid;
+    grid-template-rows: auto 0fr;
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: rgba(245, 245, 240, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 100;
+    transition: grid-template-rows 0.5s ease-in-out;
+    justify-items: center;
+}
+
+.navTopWrap.menu-open {
+    grid-template-rows: auto 1fr;
+}
+
+.navTopWrap>*:nth-child(2) {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.signin {
+    border: medium solid var(--color-primary);
+    border-radius: 0.5rem;
+    width: fit-content;
+    padding: 1rem;
+}
+
+.navTopWrap .stack1:last-child {
+    animation: slideDown 0.5s ease-out;
+}
+
+.stack1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 980px;
+    box-sizing: border-box;
+}
+
+.stack1.menu-container {
+    box-sizing: border-box;
+    min-height: 0;
+    overflow: hidden;
+}
+
+@media (min-width: 1440px) {
+    .stack1 {
+        max-width: 1200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stack1 {
+        max-width: 100%;
+    }
+}
+
+.navTopLeft {
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+    /* width: 100%; */
+    align-items: center;
+}
