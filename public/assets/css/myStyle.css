@@ -38,12 +38,14 @@ body {
   display: flex;
   width: 100%;
   justify-content: center;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   font-size: 1rem;
   text-align: center;
   background-color: var(--color-bg-dark);
   color: var(--color-text);
   max-height: 100dvh;
+  min-height: 100dvh;
 }
 
 .btn {
@@ -55,7 +57,6 @@ body {
   width: 100%;
   flex-direction: column;
 }
-
 
 .pageTitle {
   font-size: 2rem;
@@ -102,7 +103,6 @@ a:hover {
   border-radius: 1rem 1rem 0rem 0rem;
 }
 
-
 footer {
   display: flex;
   background-color: var(--color-tertiary);
@@ -130,7 +130,7 @@ main {
   background-color: var(--color-tertiary);
   align-items: center;
   row-gap: 1rem;
-  padding: 1rem 0;
+  padding: 1rem;
   position: relative;
   overflow: auto;
 }

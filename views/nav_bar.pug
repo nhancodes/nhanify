@@ -4,10 +4,10 @@
       .navTopLeft
         .menuButton
           i.fa-solid.fa-bars.menuIcon#navMenuIcon
-        a(href="/home") Nhanify
+        p#nhanify-route Nhanify
       .center-align
-        a(href="/home") Home 
-        a(href="/playlists") Playlists 
+        p#home-route Home 
+        p#playlists-route Playlists 
         //
           if (user === undefined)
             if (playlistType === "anonPublic")

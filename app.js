@@ -26,6 +26,7 @@ const { songsRouter } = require("./routes/songsRouter.js");
 const { contributorsRouter } = require("./routes/contributorsRouter.js");
 const { authRouter } = require("./routes/authRouter.js");
 const { apiRouter } = require("./routes/apiRouter.js");
+const { partialRouter } = require("./routes/partialRouter.js");
 app.set("views", "./views");
 app.set("view engine", "pug");
 app.use(express.static("public"));
@@ -59,7 +60,7 @@ app.use(authRouter);
 app.use(playlistsRouter);
 app.use(songsRouter);
 app.use(contributorsRouter);
-
+app.use(partialRouter);
 // The error handler must be registered before any other error middleware and after all controllers
 if (isProduction) Sentry.setupExpressErrorHandler(app);
 

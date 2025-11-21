@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "outDir": "./public/assets/javascript",
     "rootDir": "./src/frontend",
     "esModuleInterop": true,
@@ -17,12 +13,6 @@
     "types": [],
     "noResolve": true
   },
-  "include": [
-    "src/frontend/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules/**/*",
-    "**/*.spec.ts",
-    "**/*.d.ts"
-  ]
+  "include": ["src/frontend/**/*.ts"],
+  "exclude": ["node_modules/**/*", "**/*.spec.ts", "**/*.d.ts"]
 }
