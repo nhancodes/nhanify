@@ -73,6 +73,7 @@ a {
   font-weight: 400;
   text-decoration: none;
   color: var(--color-text);
+  white-space: nowrap;
 }
 
 a:hover {

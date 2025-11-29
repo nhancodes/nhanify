@@ -11,7 +11,7 @@ if (user !== undefined)
 				p Settings
 			.menuItem
 				i.fa-solid.fa-right-from-bracket.menuIcon
-				p Sign Out
+				form(action="/signout" method="post") 
+					button(type="submit") Sign out
 else
-	a(href="/signin") Sign In
-		i.fa-solid.fa-bars.menuIcon
+	a(href="/twitchAuth") Sign in with Twitch

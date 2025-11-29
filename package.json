@@ -11,6 +11,8 @@
     "lint": "npx eslint . --ignore-pattern 'backup.sql' --fix .",
     "test": "jest --verbose --detectOpenHandles",
     "start": "nodemon --env-file=.env app.js",
+    "start:dist": "nodemon --env-file=.env dist/backend/app.js",
+    "build": "tsc -p .tsconfig.backend.json",
     "make-db": "psql -d nhanify < lib/schema.sql && psql -d nhanify < migrations/sqls/20240918190940-add-duration-up.sql && psql -d nhanify < lib/seed.sql",
     "make-schema": "psql -d nhanify < lib/schema.sql",
     "make-seed": "psql -d nhanify < lib/seed.sql",
@@ -43,6 +45,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@types/connect-flash": "^0.0.40",
+    "@types/express": "^5.0.5",
+    "@types/express-session": "^1.18.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^18.19.130",
     "@types/web": "^0.0.272",
     "@types/youtube": "^0.1.2",
@@ -58,6 +64,7 @@
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "prettier-plugin-sql": "^0.18.0",
+    "ts-jest": "^29.4.5",
     "typescript": "^5.8.3"
   }
 }

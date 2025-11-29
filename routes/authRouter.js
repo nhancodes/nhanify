@@ -1,7 +1,7 @@
 const { CLIENT_SECRET, REDIRECT_URI, CLIENT_ID } = process.env;
 const { Router } = require("express");
 const authRouter = Router();
-const { requireAuth } = require("./middleware.ts");
+const { requireAuth } = require("./middleware.js");
 const catchError = require("./catch-error");
 const MSG = require("../lib/msg.json");
 // Get the home page.
@@ -86,6 +86,7 @@ authRouter.post(
   "/signout",
   requireAuth,
   catchError((req, res) => {
+    console.log("SIGN OUT AUTH COMPLETED");
     req.session.destroy((error) => {
       if (error) console.error(error);
       return res.redirect("/signin");

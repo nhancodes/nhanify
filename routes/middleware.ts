@@ -1,3 +1,6 @@
+import type * as express from "express";
+import type { Persistence } from "../types/types";
+
 const { DOMAIN, NHANCODES_ID } = process.env;
 const {
   NotFoundError,
@@ -9,10 +12,14 @@ const { durationSecsToHHMMSS } = require("../lib/playlist.js");
 const { ForbiddenError } = require("../lib/errors.js");
 const MAX_API_REQUEST = 900;
 
-async function apiAuth(req, res, next) {
+async function apiAuth(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) {
   const { authorization, "user-id": userId } = req.headers;
   const persistence = req.app.locals.persistence;
-  const userIdNum = +userId;
+  const userIdNum = +userId!;
   if (
     !authorization ||
     !userId ||
@@ -32,7 +39,11 @@ async function apiAuth(req, res, next) {
   next();
 }
 
-async function apiAuthStream(req, res, next) {
+async function apiAuthStream(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) {
   const { authorization } = req.headers;
   const persistence = req.app.locals.persistence;
   const response = await persistence.decryptedApiKey(NHANCODES_ID);
@@ -44,7 +55,11 @@ async function apiAuthStream(req, res, next) {
   next();
 }
 
-function requireAuth(req, res, next) {
+function requireAuth(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) {
   if (!req.session.user) {
     const requestURL = encodeURIComponent(req.originalUrl);
     const fullRequestURL = `${DOMAIN}${requestURL}`;
@@ -58,12 +73,12 @@ function requireAuth(req, res, next) {
 }
 
 async function getPlaylists(
-  playlistType,
-  page,
-  ITEMS_PER_PAGE,
-  persistence,
-  PAGE_OFFSET,
-  userId,
+  playlistType: string,
+  page: number,
+  ITEMS_PER_PAGE: number,
+  persistence: Persistence,
+  PAGE_OFFSET: number,
+  userId: number,
 ) {
   const offset = (+page - 1) * ITEMS_PER_PAGE;
   let totalPages, playlists, playlist, pageTitle;
@@ -96,7 +111,7 @@ async function getPlaylists(
   if (playlistType === "contribution") {
     pageTitle = "Contribution Playlists";
     playlist = await persistence.getContributionPlaylistTotal(userId);
-    totalPages = Math.ceil(+playlist.count / ITEMS_PER_PAGE);
+    totalPages = Math.ceil(+playlist!.count / ITEMS_PER_PAGE);
     if ((+page > totalPages && +page !== 1) || +page < 1)
       throw new NotFoundError();
     if (!playlist) throw new NotFoundError();
@@ -107,7 +122,7 @@ async function getPlaylists(
     );
   }
   const startPage = Math.max(+page - PAGE_OFFSET, 1);
-  const endPage = Math.min(+page + PAGE_OFFSET, totalPages);
+  const endPage = Math.min(+page + PAGE_OFFSET, totalPages!);
   return {
     startPage,
     endPage,
@@ -116,18 +131,18 @@ async function getPlaylists(
     pageTitle,
     playlists,
     page: +page,
-    playlistTotal: +playlist.count,
+    playlistTotal: +playlist!.count,
   };
 }
 
 async function getPlaylist(
-  persistence,
-  ITEMS_PER_PAGE,
-  PAGE_OFFSET,
-  playlistType,
-  playlistId,
-  page,
-  pagePl,
+  persistence: Persistence,
+  ITEMS_PER_PAGE: number,
+  PAGE_OFFSET: number,
+  playlistType: string,
+  playlistId: string,
+  page: string,
+  pagePl: string,
 ) {
   const offset = (+pagePl - 1) * ITEMS_PER_PAGE;
   const playlist = await persistence.getSongTotal(+playlistId);

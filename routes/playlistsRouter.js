@@ -1,10 +1,10 @@
 const { Router } = require("express");
 const { v7: uuidv7 } = require("uuid");
 const playlistsRouter = Router();
-const { requireAuth } = require("./middleware.ts");
+const { requireAuth } = require("./middleware.js");
 const catchError = require("./catch-error.js");
 const { NotFoundError, ForbiddenError } = require("../lib/errors.js");
-const { getPlaylists, getPlaylist } = require("./middleware.ts");
+const { getPlaylists, getPlaylist } = require("./middleware.js");
 const { body, validationResult } = require("express-validator");
 const PLAYLISTS_PER_PAGE = 10;
 const MSG = require("../lib/msg.json");
@@ -250,7 +250,13 @@ playlistsRouter.get(
       userId,
     );
 
-    res.render("playlists", { apiKey: req.session.apiKey, ...data });
+    console.log("PLAYLISTS ROUTE");
+    req.headers["x-partial"]
+      ? res.render("partials/partial_playlists", {
+          apiKey: req.session.apiKey,
+          ...data,
+        })
+      : res.render("playlists", { apiKey: req.session.apiKey, ...data });
     req.session.apiKey = "";
     return;
   }),

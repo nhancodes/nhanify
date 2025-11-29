@@ -13,7 +13,7 @@ const {
 const { YT_API_KEY } = process.env;
 const { getVidInfo, durationSecsToHHMMSS } = require("../lib/playlist.js");
 const catchError = require("./catch-error.js");
-const { apiAuth } = require("./middleware.ts");
+const { apiAuth } = require("./middleware");
 let clients = [];
 apiRouter.use(json());
 
