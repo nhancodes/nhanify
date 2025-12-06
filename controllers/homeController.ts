@@ -5,13 +5,14 @@ export const getHomePage = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
-  try {
-    res.render("partials/partial_home", {
-      message: "Welcome to the home page",
+  if (req.get("x-partial")) {
+    return res.render("partials/partial_home", {
+      message: "Partial home page",
     });
-  } catch (err) {
-    next(err);
   }
+  return res.render("home", {
+    message: "Not a partial home page",
+  });
 };
 
 module.exports = { getHomePage };

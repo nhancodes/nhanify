@@ -89,6 +89,9 @@ authRouter.post(
     console.log("SIGN OUT AUTH COMPLETED");
     req.session.destroy((error) => {
       if (error) console.error(error);
+      if (req.get("x-partial")) {
+        return res.render("partials/partial_signin");
+      }
       return res.redirect("/signin");
     });
   }),
@@ -103,6 +106,9 @@ authRouter.get(
       return res.redirect("/your/playlists/1");
     }
     req.session.originRedirectUrl = req.query.redirectUrl;
+    if (req.get("x-partial")) {
+      return res.render("partials/partial_signin");
+    }
     return res.render("signin");
   }),
 );

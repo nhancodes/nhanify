@@ -66,7 +66,12 @@ function requireAuth(
     req.session.requestMethod = req.method;
     req.session.referrer = req.header("Referrer");
     req.flash("errors", MSG.error401);
-    res.redirect(`/signin?fullRedirectUrl=${fullRequestURL}`);
+    if (req.get("x-partial")) {
+      return res.render("partials/partial_signin", {
+        fullRedirectUrl: fullRequestURL,
+      });
+    }
+    return res.redirect(`/signin?fullRedirectUrl=${fullRequestURL}`);
   } else {
     next();
   }

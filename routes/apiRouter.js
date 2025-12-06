@@ -29,7 +29,7 @@ const getPublicPlaylists = async (req, res) => {
       songCount: +playlist.count,
     };
   });
-  res.json({ playlists: formattedData });
+  res.json(formattedData);
 };
 
 const getPlaylist = async (req, res) => {
@@ -39,7 +39,6 @@ const getPlaylist = async (req, res) => {
   }
   const persistence = req.app.locals.persistence;
   const playlist = await persistence.getPlaylist(+id);
-  console.log("THE PLAYLIST", playlist);
   if (!playlist) throw new NotFoundError("Playlist not found");
   const result = await persistence.getPlaylistInfoSongs(req.params.id, 0, 100);
   const info = result.info;
@@ -66,12 +65,13 @@ const getPlaylist = async (req, res) => {
 const getPlaylistsByIds = async (req, res) => {
   const persistence = req.app.locals.persistence;
   const ids = typeof req.query.id === "string" ? [req.query.id] : req.query.id;
-
+  console.log({ ids });
   const queryParams = ids.reduce((accum, id) => {
     if (!Number.isNaN(+id) && Number.isInteger(+id) && +id >= 0 && id !== "")
       accum.push(+id);
     return accum;
   }, []);
+  console.log({ queryParams });
   if (queryParams.length === 0) return res.json({ playlists: [] });
   const playlists = await persistence.getPlaylistsByIdPage(queryParams);
   const formattedData = playlists.map((playlist) => {
@@ -83,14 +83,10 @@ const getPlaylistsByIds = async (req, res) => {
       songCount: +playlist.count,
     };
   });
-  res.json({ playlists: formattedData });
+  res.json(formattedData);
 };
 
-apiRouter.get(
-  "/playlists/public",
-  catchError(apiAuth),
-  catchError(getPublicPlaylists),
-);
+apiRouter.get("/playlists/public", catchError(getPublicPlaylists));
 
 apiRouter.get("/playlists", catchError(apiAuth), catchError(getPlaylistsByIds));
 
@@ -163,13 +159,12 @@ apiRouter.post(
         addedBy: req.body.addedBy,
         duration: durationSecsToHHMMSS(addedSong.duration_sec),
       });
-      res.json({ message: "success", song: addedSong });
+      res.json(addedSong);
     }
   }),
 );
 
 apiRouter.get("/event", (req, res) => {
-  console.log("IN EVENT");
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -181,8 +176,6 @@ apiRouter.get("/event", (req, res) => {
 });
 
 function sendEvent(data) {
-  console.log("IN SENTEVENT");
-  console.log({ clients });
   clients.forEach((client) => {
     console.log({ data });
     try {
@@ -200,7 +193,7 @@ apiRouter.use("*", (req, res, next) => {
 apiRouter.use((err, req, res, _next) => {
   // do not remove next parameter
   if (err.constraint === "unique_video_id_playlist_id") {
-    res.status(403).json({ message: "duplicate_video_id" });
+    res.status(400).json({ message: "duplicate_video_id" });
   } else if (err instanceof ForbiddenError) {
     res.status(403).json({ message: err.message });
   } else if (err instanceof NotFoundError) {

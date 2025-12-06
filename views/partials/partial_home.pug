@@ -1,2 +1,13 @@
-p This is the home partial.
-p #{message}
+h3 4,434,322 Nhanify community members
+.section
+    h3 Recently joined members
+    #recent-members-container
+.section
+    h3 Recently added songs
+    #recent-songs-container
+.section
+    h3 Top playlists
+    #top-playlists-container
+
+block scripts 
+    script(type="module" src="/assets/javascript/home.js" defer)

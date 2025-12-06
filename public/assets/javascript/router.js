@@ -14,15 +14,30 @@ async function getPartial(url) {
   return await response.text();
 }
 window.addEventListener("click", async (event) => {
-  console.log("NHANIFY ROUTE CLICKED");
+  const target = event.target;
+  if (!target) return;
+  if (target.id == "signout-form") {
+    event.preventDefault();
+    try {
+      await fetch("/signout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/html",
+          "X-Partial": "Partial" /* add CSRF token header here */,
+        },
+        body: JSON.stringify({}),
+      });
+      window.location.href = "/signin"; // or handle UI update
+    } catch (error) {
+      console.error(error);
+    }
+    return;
+  }
+  const href = target.getAttribute("href") ?? "";
   if (event.target instanceof HTMLAnchorElement) {
-    console.log(event.target.getAttribute("href"));
-    const href = event.target.getAttribute("href") ?? "";
     if (href !== "/twitchAuth") event.preventDefault();
     try {
-      const href = event.target.getAttribute("href") ?? "";
       const partial = await getPartial(href);
-      console.log(document.querySelector("main"));
       document.querySelector("main").innerHTML = partial;
     } catch (error) {
       console.error(error);

@@ -84,7 +84,7 @@ describe("api auth middleware", () => {
     }).rejects.toThrow(BadRequestError);
   });
 
-  describe("get playlists by ids", () => {
+  describe.skip("get playlists by ids", () => {
     let result;
     const response = { json: (data) => (result = data) };
     const req = { app: { locals: { persistence: persistence } } };

@@ -109,7 +109,9 @@
   #player-container {
     max-width: 100%;
   }
-
+  #top-playlists-container {
+    grid-template-columns: 1fr;
+  }
   .iframeDiv iframe {
     width: 100px;
     height: 50px;

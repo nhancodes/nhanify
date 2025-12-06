@@ -6,3 +6,5 @@ session-store.db
 node_modules/
 backup.sql
 .idea/
+src/**/*
+dist/**/*
