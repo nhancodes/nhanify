@@ -1,4 +1,4 @@
-async function getPartial(url) {
+async function getPartial(url: string): Promise<string> {
   const options = {
     headers: {
       "Content-Type": "text/html",
@@ -13,8 +13,9 @@ async function getPartial(url) {
   }
   return await response.text();
 }
+
 window.addEventListener("click", async (event) => {
-  const target = event.target;
+  const target = event.target as Element | null;
   if (!target) return;
   if (target.id == "signout-form") {
     event.preventDefault();
@@ -38,10 +39,9 @@ window.addEventListener("click", async (event) => {
     if (href !== "/twitchAuth") event.preventDefault();
     try {
       const partial = await getPartial(href);
-      document.querySelector("main").innerHTML = partial;
+      document.querySelector("main")!.innerHTML = partial;
     } catch (error) {
       console.error(error);
     }
   }
 });
-//# sourceMappingURL=router.js.map

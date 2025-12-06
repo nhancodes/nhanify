@@ -1,7 +1,9 @@
-import { apiFetch } from "./api.js";
+import type { Playlist, Song } from "./types/apiRouterTypes.js";
+import { apiFetch, type ApiResponse } from "./api.js";
+
 // Dummy data for latest songs (matching Song interface)
 // Dummy data for latest songs (matching Song interface)
-const latestSongs = [
+const latestSongs: Song[] = [
   {
     id: 1,
     playlistId: 3,
@@ -58,21 +60,29 @@ const latestSongs = [
     totalImpressions: 4892,
   },
 ];
-const publicPlaylistResult = await apiFetch("/api/playlists/public", {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
+
+const publicPlaylistResult: ApiResponse<Playlist[] | null> = await apiFetch(
+  "/api/playlists/public",
+  {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   },
-});
+);
+
 if (publicPlaylistResult.status === 200 && publicPlaylistResult.data) {
-  const publicPlaylists = publicPlaylistResult.data;
+  const publicPlaylists: Playlist[] = publicPlaylistResult.data;
   console.log("Fetched public playlists:", publicPlaylists);
   renderTopPlaylists(publicPlaylists);
 }
+
 renderLatestSongs(latestSongs);
-function renderTopPlaylists(playlists) {
+
+function renderTopPlaylists(playlists: Playlist[]) {
   const parent = document.getElementById("top-playlists-container");
   if (!parent) return;
+
   playlists.forEach((playlist) => {
     // Create card info section
     const cardInfo = createElement("div", "card-info", [
@@ -82,6 +92,7 @@ function renderTopPlaylists(playlists) {
       ]),
       createElement("p", undefined, [`${playlist.songCount} songs`]),
     ]);
+
     // Create play button with icon
     const actions = createElement("div", "playButton", [
       createElement("div", "rating-container", [
@@ -106,20 +117,24 @@ function renderTopPlaylists(playlists) {
         createElement("i", "fas fa-play"),
       ]),
     ]);
+
     const top = createElement("div", "top-card", [cardInfo, playAction]);
     // Create card container
     const card = createElement("div", "card", [top, actions]);
+
     parent.appendChild(card);
   });
 }
-function renderLatestSongs(songs) {
+function renderLatestSongs(songs: Song[]) {
   const parent = document.getElementById("recent-songs-container");
   if (!parent) return;
+
   songs.forEach((song) => {
     // Format duration as MM:SS
     const minutes = Math.floor(song.durationSec / 60);
     const seconds = song.durationSec % 60;
     const duration = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
     // Create song card
     const songCard = createElement("div", "card", [
       createElement("div", "card-info", [
@@ -136,11 +151,16 @@ function renderLatestSongs(songs) {
       ]),
       createElement("div", "playButton", [createElement("i", "fas fa-play")]),
     ]);
+
     parent.appendChild(songCard);
   });
 }
 // Helper to create element with class and optional children
-function createElement(tag, className, children) {
+function createElement<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
+  className?: string,
+  children?: (HTMLElement | string)[],
+): HTMLElementTagNameMap[K] {
   const el = document.createElement(tag);
   if (className) el.className = className;
   if (children) {
@@ -154,4 +174,3 @@ function createElement(tag, className, children) {
   }
   return el;
 }
-//# sourceMappingURL=home.js.map

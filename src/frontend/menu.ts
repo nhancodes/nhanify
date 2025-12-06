@@ -1,10 +1,12 @@
 export function toggleMenu() {
   const navMenuIcon = document.getElementById("navMenuIcon");
   const navTop = document.querySelector(".navTopWrap");
+
   if (navMenuIcon && navTop) {
     navMenuIcon.addEventListener("click", (e) => {
       e.stopPropagation();
       const isOpen = navTop.classList.contains("menu-open");
+
       if (isOpen) {
         navTop.classList.remove("menu-open");
         navMenuIcon.classList.remove("fa-xmark");
@@ -25,4 +27,3 @@ export function toggleMenu() {
     });
   }
 }
-//# sourceMappingURL=menu.js.map
