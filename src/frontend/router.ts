@@ -1,3 +1,10 @@
+import {
+  renderLatestSongs,
+  renderLastestUsers,
+  renderTopPlaylists,
+} from "./home.js";
+import { lastestUsers, latestSongs, publicPlaylists } from "./dummy_data.js";
+
 async function getPartial(url: string): Promise<string> {
   const options = {
     headers: {
@@ -16,6 +23,7 @@ async function getPartial(url: string): Promise<string> {
 
 window.addEventListener("click", async (event) => {
   const target = event.target as Element | null;
+  console.log({ target });
   if (!target) return;
   if (target.id == "signout-form") {
     event.preventDefault();
@@ -35,11 +43,16 @@ window.addEventListener("click", async (event) => {
     return;
   }
   const href = target.getAttribute("href") ?? "";
+  console.log({ href });
   if (event.target instanceof HTMLAnchorElement) {
     if (href !== "/twitchAuth") event.preventDefault();
     try {
       const partial = await getPartial(href);
       document.querySelector("main")!.innerHTML = partial;
+      console.log("Loaded partial from href:");
+      renderLatestSongs(latestSongs);
+      renderLastestUsers(lastestUsers);
+      renderTopPlaylists(publicPlaylists);
     } catch (error) {
       console.error(error);
     }

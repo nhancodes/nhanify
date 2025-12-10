@@ -8,6 +8,12 @@ h3 4,434,322 Nhanify community members
 .section
     h3 Top playlists
     #top-playlists-container
-
-block scripts 
-    script(type="module" src="/assets/javascript/home.js" defer)
+if partial
+    block scripts 
+        script(type="module").
+            console.log('Partial home script loaded'); 
+            import { renderLatestSongs, renderLastestUsers, renderTopPlaylists } from '/assets/javascript/home.js';
+            import { latestSongs, lastestUsers, publicPlaylists } from '/assets/javascript/dummy_data.js';
+            renderLastestUsers(lastestUsers);
+            renderLatestSongs(latestSongs);
+            renderTopPlaylists(publicPlaylists);

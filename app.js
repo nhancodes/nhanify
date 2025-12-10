@@ -9,7 +9,7 @@ if (isProduction) {
   // Import with `import * as Sentry from "@sentry/node"` if you are using ESM
   Sentry = require("@sentry/node");
 }
-
+const path = require("path");
 const express = require("express");
 const app = express();
 const session = require("express-session");
@@ -29,6 +29,8 @@ const { apiRouter } = require("./routes/apiRouter.js");
 const { homeRouter } = require("./routes/homeRouter.js");
 app.set("views", "./views");
 app.set("view engine", "pug");
+// let DevTools fetch original TS via sourcemap URLs like /src/...
+app.use("/src", express.static(path.join(__dirname, "..", "..", "src")));
 app.use(express.static("public"));
 app.use(morgan("common"));
 app.use(express.urlencoded({ extended: true }));

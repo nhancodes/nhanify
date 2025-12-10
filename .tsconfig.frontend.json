@@ -11,8 +11,7 @@
     "skipDefaultLibCheck": true,
     "sourceMap": true,
     "types": [],
-    "moduleResolution": "node",
-    "noResolve": true
+    "moduleResolution": "node"
   },
   "include": ["src/frontend/**/*.ts"],
   "exclude": ["node_modules/**/*", "**/*.spec.ts", "**/*.d.ts"]

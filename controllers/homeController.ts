@@ -7,11 +7,11 @@ export const getHomePage = async (
 ): Promise<void> => {
   if (req.get("x-partial")) {
     return res.render("partials/partial_home", {
-      message: "Partial home page",
+      partial: true,
     });
   }
   return res.render("home", {
-    message: "Not a partial home page",
+    partial: false,
   });
 };
 

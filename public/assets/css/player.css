@@ -51,7 +51,8 @@
   width: 100%;
   display: flex;
   position: relative;
-  max-width: 980px;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 1rem;
 }
 
@@ -93,10 +94,6 @@
 }
 
 @media (min-width: 1440px) {
-  #player-container {
-    max-width: 1200px;
-  }
-
   .iframeDiv iframe {
     display: flex;
     border-radius: 1rem;
@@ -109,9 +106,11 @@
   #player-container {
     max-width: 100%;
   }
+
   #top-playlists-container {
     grid-template-columns: 1fr;
   }
+
   .iframeDiv iframe {
     width: 100px;
     height: 50px;

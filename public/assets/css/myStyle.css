@@ -126,14 +126,15 @@ footer {
 main {
   display: flex;
   width: 100%;
+  max-width: 1200px;
   flex-direction: column;
   height: 100%;
-  background-color: var(--color-tertiary);
   align-items: center;
-  row-gap: 1rem;
+  row-gap: 4rem;
   padding: 1rem;
   position: relative;
   overflow: auto;
+  margin: 0 auto;
 }
 
 .playlistsDiv {
