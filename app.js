@@ -52,6 +52,10 @@ app.use(
 app.use(flash());
 app.use((req, res, next) => {
   if (req.url === "/favicon.ico") return res.status(204).end();
+  const header = req.get("X-Partial"); // e.g. "Partial"
+  console.log("X-Partial header:", header);
+  // make sure Pug sees a true/false value
+  res.locals.partial = header === "Partial";
   res.locals.user = req.session.user;
   res.locals.flash = req.session.flash;
   delete req.session.flash;

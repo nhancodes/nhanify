@@ -3,8 +3,80 @@ export interface ApiResponse<T> {
   message: string;
   data: T | null;
 }
+import type { Playlist, User, Song } from "./types/apiRouterTypes.js";
 
-export async function apiFetch<T>(
+// Todo : Replace with real API calls
+export async function getLastestSongs(): Promise<Song[]> {
+  const response = await apiFetch<Song[]>("/api/songs/lastest", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.data) {
+    console.error(
+      `Failed to fetch lastest added songs: ${response.message} (status: ${response.status})`,
+    );
+    return [];
+  }
+  return response.data;
+}
+
+// Todo : Replace with real API calls
+export async function getLastestUsers(): Promise<User[]> {
+  const response = await apiFetch<User[]>("/api/users/lastest", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.data) {
+    console.error(
+      `Failed to fetch lastest joined users: ${response.message} (status: ${response.status})`,
+    );
+    return [];
+  }
+  return response.data;
+}
+
+// Todo : Replace with real API calls
+export async function getTopPlaylists(): Promise<Playlist[]> {
+  const response = await apiFetch<Playlist[]>("/api/playlists/public/top", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.data) {
+    console.error(
+      `Failed to fetch top public playlists: ${response.message} (status: ${response.status})`,
+    );
+    return [];
+  }
+  return response.data;
+}
+
+export async function getPublicPlaylists(): Promise<Playlist[]> {
+  const response = await apiFetch<Playlist[]>("/api/playlists/public", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.data) {
+    console.error(
+      `Failed to fetch public playlists: ${response.message} (status: ${response.status})`,
+    );
+    return [];
+  }
+  return response.data;
+}
+
+async function apiFetch<T>(
   url: string,
   options: RequestInit,
 ): Promise<ApiResponse<T>> {
@@ -26,7 +98,6 @@ export async function apiFetch<T>(
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    console.error(`Error fetching public playlists: ${message}`);
     return { status: 0, message, data: null } as ApiResponse<T>;
   }
 }

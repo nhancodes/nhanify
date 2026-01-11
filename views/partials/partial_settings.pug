@@ -1,0 +1,8 @@
+.key
+  if (playlistType === "your")
+    .userInfo
+      p.left User Id: #{user.id}
+      form(action=`/your/playlists/${page}/createApiKey` method="post")
+        input(type="submit" value="Generate API Key")
+      if (apiKey) 
+        p.left #{apiKey}

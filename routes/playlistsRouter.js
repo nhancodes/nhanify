@@ -250,13 +250,35 @@ playlistsRouter.get(
       userId,
     );
 
-    console.log("PLAYLISTS ROUTE");
-    req.headers["x-partial"]
+    const yourPlaylists = data.playlists.map((playlist) => {
+      // Ensure songCount is a number
+      return {
+        id: playlist.id,
+        title: playlist.title,
+        creator: {
+          id: playlist.creator_id,
+          username: playlist.username,
+          createdAt: "",
+        },
+        songCount: Number(playlist.count ?? 0),
+        totalLikes: Number(playlist.totalLikes ?? 0),
+        createdAt: playlist.createdAt ?? "",
+        contributors: playlist.contributors ?? [],
+        thumbnail: playlist.thumbnail ?? "",
+      };
+    });
+
+    res.locals.partial
       ? res.render("partials/partial_playlists", {
           apiKey: req.session.apiKey,
-          ...data,
+          playlists: yourPlaylists,
+          playlistType,
         })
-      : res.render("playlists", { apiKey: req.session.apiKey, ...data });
+      : res.render("playlists", {
+          apiKey: req.session.apiKey,
+          playlists: yourPlaylists,
+          playlistType,
+        });
     req.session.apiKey = "";
     return;
   }),
@@ -285,7 +307,32 @@ playlistsRouter.get(
       req.app.locals.persistence,
       PAGE_OFFSET,
     );
-    return res.render("public_playlists", data);
+    const publicPlaylists = data.playlists.map((playlist) => {
+      // Ensure songCount is a number
+      return {
+        id: playlist.id,
+        title: playlist.title,
+        creator: {
+          id: playlist.creator_id,
+          username: playlist.username,
+          createdAt: "",
+        },
+        songCount: Number(playlist.count ?? 0),
+        totalLikes: Number(playlist.totalLikes ?? 0),
+        createdAt: playlist.createdAt ?? "",
+        contributors: playlist.contributors ?? [],
+        thumbnail: playlist.thumbnail ?? "",
+      };
+    });
+    res.locals.partial
+      ? res.render("partials/partial_playlists", {
+          playlistType: "anonPublic",
+          playlists: publicPlaylists,
+        })
+      : res.render("playlists", {
+          playlistType: "anonPublic",
+          playlists: publicPlaylists,
+        });
   }),
 );
 

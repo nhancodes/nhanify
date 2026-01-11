@@ -1,10 +1,21 @@
 /* profile menu */
 .profileMenu {
+  position: relative;
+  display: inline-flex;
+  width: auto;
   display: flex;
   flex-direction: column;
-  align-self: flex-end;
-  width: 100%;
-  animation: fadeIn 0.4s ease-out;
+}
+
+.profileMenu > summary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
 }
 
 .profileMenu summary {
@@ -31,17 +42,35 @@
   color: var(--color-primary);
 }
 
+/* Position the dropdown so its RIGHT edge aligns to the LEFT edge of the button */
 .profileDropdown {
   position: absolute;
+  top: calc(100% + 8px);
   right: 0;
-  top: calc(100% + 0.5rem);
-  background: var(--color-tertiary);
-  border: 1px solid var(--color-secondary);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0;
-  min-width: 200px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 10;
+  /* align dropdown right edge with the button's right edge */
+  left: auto;
+  transform: none;
+  min-width: 180px;
+  background: #f6f6f4;
+  /* desired menu color */
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  /* subtle border */
+  border-radius: 10px;
+  /* desired border radius */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  display: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* show when open */
+.profileMenu[open] .profileDropdown {
+  display: block;
+}
+
+/* tighter item padding to match the new menu sizing */
+.menuItem {
+  padding: 0.6rem 0.9rem;
 }
 
 .menuItem {
@@ -128,7 +157,7 @@
   width: 100%;
   position: sticky;
   top: 0;
-  background-color: rgba(245, 245, 240, 0.5);
+  background-color: rgb(255 255 255 / 49%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 100;
@@ -198,4 +227,12 @@
   .center-align {
     display: none;
   }
+}
+
+/* If you want the whole playButton area to center the menu horizontally */
+.playButton {
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  /* uncomment to center all controls */
 }

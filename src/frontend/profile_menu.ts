@@ -1,21 +1,35 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const profileMenu = document.querySelector(
-    ".profileMenu",
-  ) as HTMLDetailsElement;
-  const profileSummary = profileMenu?.querySelector("summary") as HTMLElement;
+  // Toggle clicked profileMenu summary (delegated so it works for many or dynamic menus)
+  document.addEventListener("click", (e) => {
+    const summary = (e.target as HTMLElement).closest("summary");
+    if (!summary) return;
+    const details = summary.parentElement as HTMLDetailsElement | null;
+    if (!details || !details.classList.contains("profileMenu")) return;
 
-  if (profileMenu && profileSummary) {
-    // Prevent default toggle to control it manually
-    profileSummary.addEventListener("click", (e) => {
-      e.preventDefault();
-      profileMenu.open = !profileMenu.open;
-    });
+    // prevent native toggle so we can control open/close and close others
+    e.preventDefault();
+    details.open = !details.open;
+  });
 
-    // Close on outside click
-    document.addEventListener("mousedown", (e) => {
-      if (profileMenu.open && !profileMenu.contains(e.target as Node)) {
-        profileMenu.open = false;
-      }
+  // When any profileMenu is opened, close the others
+  document.addEventListener("toggle", (e) => {
+    const changed = e.target;
+    if (!(changed instanceof HTMLDetailsElement)) return;
+    if (!changed.classList.contains("profileMenu")) return;
+
+    if (changed.open) {
+      document.querySelectorAll("details.profileMenu[open]").forEach((d) => {
+        if (d !== changed) (d as HTMLDetailsElement).open = false;
+      });
+    }
+  });
+
+  // Close open profileMenus on outside mousedown (works well with click toggle)
+  document.addEventListener("mousedown", (e) => {
+    const target = e.target as Node | null;
+    if (!target) return;
+    document.querySelectorAll("details.profileMenu[open]").forEach((d) => {
+      if (!d.contains(target)) (d as HTMLDetailsElement).open = false;
     });
-  }
+  });
 });

@@ -35,7 +35,41 @@ songsRouter.get(
       page,
       pagePl,
     );
-    return res.render("playlist", data);
+    const songs = data.playlist.songs.map((song) => {
+      return {
+        title: song.title,
+        videoId: song.video_id,
+        durationSecs: song.duration_secs,
+        createdAt: song.created_at ?? "",
+        totalLikes: song.total_likes ?? 0,
+        id: song.id,
+        creator: song.creator ?? {
+          id: 0,
+          username: song.added_by,
+        },
+        playlistId: data.playlistId,
+      };
+    });
+    const playlist = {
+      id: data.playlistId,
+      title: data.playlist.info.title ?? "",
+      songCount: data.playlist.songTotal ? +data.playlist.songTotal : 0,
+      creator: data.playlist.info.creator ?? {
+        id: data.playlist.info.creator_id,
+        username: data.playlist.info.added_by ?? "Unknown",
+      },
+      totalLikes: data.playlist.info.total_likes ?? 0,
+      createdAt: data.playlist.info.created_at ?? "",
+      contributors: data.playlist.info.contributors ?? [],
+      thumbnail: data.playlist.info.thumbnail ?? "",
+    };
+    res.locals.partial
+      ? res.render("partials/partial_playlist", {
+          playlist,
+          playlistType,
+          songs,
+        })
+      : res.render("playlist", { playlist, playlistType, songs });
   }),
 );
 

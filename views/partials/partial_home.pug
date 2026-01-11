@@ -1,19 +1,27 @@
-h3 4,434,322 Nhanify community members
+.head-section
+    #gif
+        #head-detail
+            h3#member-count 4,434,322
+            h4#member-count Nhanify community members
 .section
-    h3 Recently joined members
+    h2 Recently joined members
     #recent-members-container
 .section
-    h3 Recently added songs
+    h2 Recently added songs
     #recent-songs-container
 .section
-    h3 Top playlists
+    h2 Top playlists
     #top-playlists-container
-if partial
-    block scripts 
-        script(type="module").
-            console.log('Partial home script loaded'); 
-            import { renderLatestSongs, renderLastestUsers, renderTopPlaylists } from '/assets/javascript/home.js';
-            import { latestSongs, lastestUsers, publicPlaylists } from '/assets/javascript/dummy_data.js';
-            renderLastestUsers(lastestUsers);
-            renderLatestSongs(latestSongs);
-            renderTopPlaylists(publicPlaylists);
+
+if partial 
+  script#initial-data(type="application/json").
+    !{JSON.stringify({ topPlaylists, latestUsers, latestSongs, playlistType })}
+else
+  script(type="module").
+    import { renderPlaylists, renderUsers, renderSongs } from "/assets/javascript/UiRender.js";
+    const topPlaylists = !{JSON.stringify(topPlaylists)}; 
+    const latestSongs = !{JSON.stringify(latestSongs)}; 
+    const latestUsers = !{JSON.stringify(latestUsers)}; 
+    renderPlaylists("#{playlistType}", topPlaylists);
+    renderSongs(latestSongs);
+    renderUsers(latestUsers);

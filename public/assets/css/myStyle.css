@@ -131,10 +131,10 @@ main {
   height: 100%;
   align-items: center;
   row-gap: 4rem;
-  padding: 1rem;
   position: relative;
   overflow: auto;
   margin: 0 auto;
+  padding: 0rem 1rem;
 }
 
 .playlistsDiv {
@@ -540,4 +540,22 @@ pre {
 
 .rotate180 {
   transform: rotate(180deg);
+}
+
+main,
+.playlistsDiv,
+.playListWrap {
+  /* Firefox */
+  scrollbar-width: none;
+  /* IE 10+ */
+  -ms-overflow-style: none;
+}
+
+/* WebKit/Blink (Chrome, Safari, Edge) */
+main::-webkit-scrollbar,
+.playlistsDiv::-webkit-scrollbar,
+.playListWrap::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }

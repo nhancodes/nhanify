@@ -60,6 +60,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  background-color: rgb(255 255 255 / 49%);
 }
 
 .row.right {
