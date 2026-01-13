@@ -3,11 +3,12 @@
   #recent-songs-container
 if partial 
   script#initial-data(type="application/json").
-    !{JSON.stringify({ playlist, playlistType, songs})}
+    !{JSON.stringify({ playlists: [playlist], playlistType, songs})}
 else
 script(type="module").
   import { renderSongs, renderPlaylists } from "/assets/javascript/UiRender.js";
   const playlists = [!{JSON.stringify(playlist)}]
   const songs = !{JSON.stringify(songs)} 
+  console.log(playlists, songs);
   renderPlaylists("#{playlistType}", playlists);
-  renderSongs(songs);
+  renderSongs(songs, "#{playlistType}");

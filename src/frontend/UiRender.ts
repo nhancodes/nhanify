@@ -1,13 +1,11 @@
 import { Playlist, Song, User } from "./types/apiRouterTypes.js";
 
 export function renderPlaylists(type: string, playlists: Playlist[]) {
-  debugger;
   const parent = document.getElementById("top-playlists-container");
   if (!parent) return;
 
   playlists.forEach((playlist) => {
     console.log({ playlist });
-    debugger;
     const playlistCount =
       playlist.songCount > 1
         ? `${playlist.songCount} songs`
@@ -33,29 +31,47 @@ export function renderPlaylists(type: string, playlists: Playlist[]) {
       { text: playlistCount },
       contributors,
     ];
+
     const cardInfoChildrenFiltered = cardInfoChildren.filter(
       (item) => item !== null,
     ) as { text: string; link?: string }[];
     const cardInfo = createInfo(playlist.title, cardInfoChildrenFiltered);
-    const actions = createActions(playlist.id, playlist.totalLikes);
-    const thumbnail = createElement("div", "thumbnail t-medium", []);
+    const actions = createActions(
+      playlist.id,
+      type,
+      playlist.id,
+      playlist.totalLikes,
+    );
+    const thumbnail = createElement("a", "thumbnail t-medium", []);
     const top = createElement("div", "top-card", [cardInfo]);
-    const card = createElement("a", "card", [thumbnail, actions, top]);
-    card.setAttribute("href", `/${type}/playlists/1/playlist/1/${playlist.id}`);
+    const card = createElement("div", "card", [thumbnail, actions, top]);
+    thumbnail.setAttribute(
+      "href",
+      `/${type}/playlists/1/playlist/1/${playlist.id}`,
+    );
     parent.appendChild(card);
-    debugger;
   });
 }
 
-function createActions(id: number, totalLikes?: number) {
+function createActions(
+  id: number,
+  type: string,
+  playlistId: number,
+  totalLikes?: number,
+) {
   const menu = createDropdownActionsMenu();
+  const playContainer = createElement("a", "rating-container", [
+    createElement("i", "fas fa-play"),
+  ]);
   const actions = createElement("div", "playButton", [
     createLikeAction(totalLikes),
-    createElement("div", "rating-container", [
-      createElement("i", "fas fa-play"),
-    ]),
+    playContainer,
     menu,
   ]);
+  playContainer.setAttribute(
+    "href",
+    `/${type}/playlists/1/playlist/1/${playlistId}`,
+  );
   return actions;
 }
 
@@ -78,13 +94,17 @@ export function renderUsers(users: User[]) {
   });
 }
 
-export function renderSongs(songs: Song[]) {
-  debugger;
+export function renderSongs(songs: Song[], type: string) {
   const parent = document.getElementById("recent-songs-container");
   if (!parent) return;
 
   songs.forEach((song) => {
-    const actions = createActions(song.id, song.totalLikes);
+    const actions = createActions(
+      song.id,
+      type,
+      song.playlistId,
+      song.totalLikes,
+    );
     const thumbnail = createElement("div", "thumbnail t-small", []);
     const songTitle = createElement("p", "bold", [song.title]);
     const songCard = createInfo("", [

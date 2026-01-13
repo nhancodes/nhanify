@@ -1,5 +1,4 @@
 import { renderSongs, renderUsers, renderPlaylists } from "./UiRender.js";
-import { getPublicPlaylists } from "./api.js";
 
 async function getPartial(url: string): Promise<string> {
   const options = {
@@ -18,14 +17,13 @@ async function getPartial(url: string): Promise<string> {
 }
 
 window.addEventListener("click", async (event) => {
-  debugger;
   // if some other handler already prevented the event, don't proceed
   const target = event.target as Element | null;
   if (!target) return;
-  const link = target.closest("a");
-  const href = link?.getAttribute("href") ?? "";
+  const closestEl = target.closest("a");
+  const closestIconEl = target.closest("i");
+  const href = closestEl?.getAttribute("href") ?? "";
   console.log("Clicked link:", href);
-  debugger;
   if (!href) return;
 
   console.log({ target, href });
@@ -35,7 +33,11 @@ window.addEventListener("click", async (event) => {
   // perform SPA navigation
   event.preventDefault();
   try {
-    await loadAndRender(url.pathname + url.search + url.hash, true);
+    await loadAndRender(
+      url.pathname + url.search + url.hash,
+      true,
+      closestIconEl!,
+    );
   } catch (err) {
     console.error("router load failed:", err);
     // fallback to full navigation
@@ -43,7 +45,11 @@ window.addEventListener("click", async (event) => {
   }
 });
 
-async function loadAndRender(href: string, push = true) {
+async function loadAndRender(
+  href: string,
+  push = true,
+  closestIconEl?: Element,
+) {
   const partial = await getPartial(href);
   document.querySelector("main")!.innerHTML = partial;
 
@@ -57,22 +63,29 @@ async function loadAndRender(href: string, push = true) {
     console.warn("No initial data found for", href);
     return;
   }
-  console.log(href.includes("/your/playlists/1/playlist/1/"));
   if (
+    closestIconEl &&
+    (href.includes("/public/playlists/1/playlist/1/") ||
+      href.includes("/your/playlists/1/playlist/1/") ||
+      href.includes("/contribution/playlists/1/playlist/1/") ||
+      href.includes("/anonPublic/playlists/1/playlist/1/"))
+  ) {
+    console.log("Api Fetch data for playlist", href);
+    debugger;
+  } else if (
     href.includes("/public/playlists/1/playlist/1/") ||
     href.includes("/your/playlists/1/playlist/1/") ||
     href.includes("/contribution/playlists/1/playlist/1/") ||
     href.includes("/anonPublic/playlists/1/playlist/1/")
   ) {
-    debugger;
-    const { playlist, playlistType, songs } = data;
+    const { playlists, playlistType, songs } = data;
     console.log("Rendering playlist songs:", songs);
-    console.log("Rendering playlist info:", playlist);
-    renderPlaylists(playlistType, playlist);
-    renderSongs(songs);
+    console.log("Rendering playlist info:", playlists);
+    renderPlaylists(playlistType, playlists);
+    renderSongs(songs, playlistType);
   } else if (href.includes("/home")) {
     const { latestSongs, latestUsers, topPlaylists, playlistType } = data;
-    renderSongs(latestSongs);
+    renderSongs(latestSongs, playlistType);
     renderUsers(latestUsers);
     renderPlaylists(playlistType, topPlaylists);
     // if partial is playlists
@@ -87,7 +100,6 @@ async function loadAndRender(href: string, push = true) {
     renderPlaylists(playlistType, playlists);
   }
   if (push) history.pushState({ href }, "", href);
-  debugger;
 }
 
 // handle back/forward

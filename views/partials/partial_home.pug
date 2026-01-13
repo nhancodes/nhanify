@@ -23,5 +23,5 @@ else
     const latestSongs = !{JSON.stringify(latestSongs)}; 
     const latestUsers = !{JSON.stringify(latestUsers)}; 
     renderPlaylists("#{playlistType}", topPlaylists);
-    renderSongs(latestSongs);
+    renderSongs(latestSongs, "#{playlistType}");
     renderUsers(latestUsers);

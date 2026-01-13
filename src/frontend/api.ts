@@ -76,6 +76,24 @@ export async function getPublicPlaylists(): Promise<Playlist[]> {
   return response.data;
 }
 
+export async function getPlaylist(id: number): Promise<Playlist | null> {
+  const response = await apiFetch<Playlist>(`/api/playlist/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.data) {
+    console.error(
+      `Failed to fetch public playlists: ${response.message} (status: ${response.status})`,
+    );
+  } else {
+    console.log("Fetched playlist:", response.data);
+  }
+  return response.data;
+}
+
 async function apiFetch<T>(
   url: string,
   options: RequestInit,
