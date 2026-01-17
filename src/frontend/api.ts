@@ -3,7 +3,12 @@ export interface ApiResponse<T> {
   message: string;
   data: T | null;
 }
-import type { Playlist, User, Song } from "./types/apiRouterTypes.js";
+import type {
+  Playlist,
+  User,
+  Song,
+  PlaylistSongs,
+} from "./types/apiRouterTypes.js";
 
 // Todo : Replace with real API calls
 export async function getLastestSongs(): Promise<Song[]> {
@@ -75,9 +80,28 @@ export async function getPublicPlaylists(): Promise<Playlist[]> {
   }
   return response.data;
 }
+export async function getPlaylist(href: string): Promise<Playlist | null> {
+  const response = await apiFetch<Playlist>(href, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-export async function getPlaylist(id: number): Promise<Playlist | null> {
-  const response = await apiFetch<Playlist>(`/api/playlist/${id}`, {
+  if (!response.data) {
+    console.error(
+      `Failed to fetch public playlists: ${response.message} (status: ${response.status})`,
+    );
+  } else {
+    console.log("Fetched playlist:", response.data);
+  }
+  return response.data;
+}
+
+export async function getPlaylistSongs(
+  href: string,
+): Promise<PlaylistSongs | null> {
+  const response = await apiFetch<PlaylistSongs>(href, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

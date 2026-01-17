@@ -13,9 +13,72 @@ const {
 const { YT_API_KEY } = process.env;
 const { getVidInfo, durationSecsToHHMMSS } = require("../lib/playlist.js");
 const catchError = require("./catch-error.js");
-const { apiAuth } = require("./middleware");
+const {
+  apiAuth,
+  requireAuth,
+  getPlaylist: getPlaylistRoute,
+} = require("./middleware");
+const SONGS_PER_PAGE = 100;
+const PAGE_OFFSET = 4;
 let clients = [];
 apiRouter.use(json());
+
+/* INTERNAL APIS */
+apiRouter.get(
+  "/:playlistType/playlists/:page/playlist/:pagePl/:playlistId",
+  requireAuth,
+  catchError(async (req, res) => {
+    const { page, pagePl, playlistType, playlistId } = req.params;
+
+    if (Number.isNaN(+playlistId) || !Number.isInteger(+playlistId))
+      throw new NotFoundError();
+    const persistence = req.app.locals.persistence;
+    const isReadAuth = await persistence.isReadPlaylistAuthorized(
+      +playlistId,
+      req.session.user.id,
+    );
+    if (!isReadAuth) throw new ForbiddenError();
+    const data = await getPlaylistRoute(
+      req.app.locals.persistence,
+      SONGS_PER_PAGE,
+      PAGE_OFFSET,
+      playlistType,
+      playlistId,
+      page,
+      pagePl,
+    );
+    const songs = data.playlist.songs.map((song) => {
+      return {
+        title: song.title,
+        videoId: song.video_id,
+        durationSecs: song.duration_secs,
+        createdAt: song.created_at ?? "",
+        totalLikes: song.total_likes ?? 0,
+        id: song.id,
+        creator: song.creator ?? {
+          id: 0,
+          username: song.added_by,
+        },
+        playlistId: data.playlistId,
+      };
+    });
+    const playlist = {
+      id: data.playlistId,
+      title: data.playlist.info.title ?? "",
+      songCount: data.playlist.songTotal ? +data.playlist.songTotal : 0,
+      creator: data.playlist.info.creator ?? {
+        id: data.playlist.info.creator_id,
+        username: data.playlist.info.added_by ?? "Unknown",
+      },
+      totalLikes: data.playlist.info.total_likes ?? 0,
+      createdAt: data.playlist.info.created_at ?? "",
+      contributors: data.playlist.info.contributors ?? [],
+      thumbnail: data.playlist.info.thumbnail ?? "",
+    };
+    res.send({ playlist, playlistType, songs });
+  }),
+);
+/* INTERNAL APIS */
 
 const getPublicPlaylists = async (req, res) => {
   const persistence = req.app.locals.persistence;

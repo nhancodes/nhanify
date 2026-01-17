@@ -60,18 +60,14 @@ function createActions(
   totalLikes?: number,
 ) {
   const menu = createDropdownActionsMenu();
-  const playContainer = createElement("a", "rating-container", [
-    createElement("i", "fas fa-play"),
-  ]);
+  const playIcon = createElement("i", "fas fa-play");
+  const playContainer = createElement("div", "rating-container", [playIcon]);
   const actions = createElement("div", "playButton", [
     createLikeAction(totalLikes),
     playContainer,
     menu,
   ]);
-  playContainer.setAttribute(
-    "href",
-    `/${type}/playlists/1/playlist/1/${playlistId}`,
-  );
+  playIcon.dataset.dataApi = `/api/${type}/playlists/1/playlist/1/${playlistId}`;
   return actions;
 }
 
@@ -122,6 +118,7 @@ export function renderSongs(songs: Song[], type: string) {
         ]),
       ]),
     ]);
+    card.setAttribute("id", song.id.toString());
     parent.appendChild(card);
   });
 }

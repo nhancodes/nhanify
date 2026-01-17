@@ -22,6 +22,10 @@ h2 {
   justify-content: center;
 }
 
+.current-song {
+  background-color: rgb(200, 200, 255, 0.2);
+}
+
 .info-actions {
   display: flex;
   column-gap: 0.5rem;
