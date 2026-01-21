@@ -1,8 +1,14 @@
+import { CurrentPlaylistPageUi } from "./CurrentPlaylistPageUi.js";
+import { Player } from "./Player.js";
+import { songQueue } from "./appState.js";
 import { renderSongs, renderUsers, renderPlaylists } from "./UiRender.js";
-import { getPlaylist, getPlaylistSongs } from "./api.js";
-import { getSongQueue, getPlayer } from "./appState.js";
-const songQueue = getSongQueue();
-const player = getPlayer();
+import { getPlaylistSongs } from "./api.js";
+const player = new Player();
+const currentPlaylistPageUi = new CurrentPlaylistPageUi();
+player.addObserver(songQueue);
+currentPlaylistPageUi.addObserver(songQueue);
+songQueue.addObserver(player);
+songQueue.addObserver(currentPlaylistPageUi);
 
 async function getPartial(url: string): Promise<string> {
   const options = {
@@ -64,9 +70,8 @@ async function loadAndRender(path: string, push = true, pathType?: string) {
           console.warn("No playlist data found for", path);
           return;
         }
-        const { playlist, songs } = data;
-        console.log("Fetched playlist data:", playlist);
-        songQueue.setQueue(songs);
+        console.log("Fetched data:", data);
+        songQueue.setQueue(data);
       } catch (err) {
         console.error("Failed to fetch playlist data for", path, err);
       }
@@ -89,16 +94,17 @@ async function loadAndRender(path: string, push = true, pathType?: string) {
       )
     ) {
       const { playlists, playlistType, songs } = data;
-      console.log("Rendering playlist songs:", songs);
       console.log("Rendering playlist info:", playlists);
+      console.log("Rendering playlist songs:", songs);
       renderPlaylists(playlistType, playlists);
       renderSongs(songs, playlistType);
+      debugger;
+      currentPlaylistPageUi.setCurrentPlaylistId(playlists[0].id);
     } else if (path.includes("/home")) {
       const { latestSongs, latestUsers, topPlaylists, playlistType } = data;
       renderSongs(latestSongs, playlistType);
       renderUsers(latestUsers);
       renderPlaylists(playlistType, topPlaylists);
-      // if partial is playlists
     } else if (/^\/(anon\/public|your|contribution)\/playlists/.test(path)) {
       const { playlists, playlistType } = data;
       console.log("playlists:", playlists);
@@ -113,7 +119,7 @@ window.addEventListener("popstate", async (ev) => {
   const state = ev.state as { href?: string } | null;
   const href = state?.href ?? location.pathname;
   try {
-    await loadAndRender(href, false); // don't push state when responding to popstate
+    await loadAndRender(href, false, "href"); // don't push state when responding to popstate
   } catch (err) {
     console.error("Failed to restore partial for", href, err);
     // fallback: full navigation

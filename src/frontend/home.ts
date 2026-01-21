@@ -1,7 +1,10 @@
 import { renderPlaylists, renderUsers, renderSongs } from "./UiRender.js";
-import { lastestUsers, latestSongs, topPlaylists } from "./api.js";
+import { getLatestUsers, getLatestSongs, getTopPlaylists } from "./api.js";
 
 // Todo : replace with real API calls
-renderUsers(lastestUsers);
+const latestUsers = await getLatestUsers();
+const topPlaylists = await getTopPlaylists();
+const latestSongs = await getLatestSongs();
+renderUsers(latestUsers);
 renderPlaylists("anonPublic", topPlaylists);
-renderSongs(latestSongs);
+renderSongs(latestSongs, "anonPublic");

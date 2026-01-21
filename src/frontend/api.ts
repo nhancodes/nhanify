@@ -11,7 +11,7 @@ import type {
 } from "./types/apiRouterTypes.js";
 
 // Todo : Replace with real API calls
-export async function getLastestSongs(): Promise<Song[]> {
+export async function getLatestSongs(): Promise<Song[]> {
   const response = await apiFetch<Song[]>("/api/songs/lastest", {
     method: "GET",
     headers: {
@@ -21,7 +21,7 @@ export async function getLastestSongs(): Promise<Song[]> {
 
   if (!response.data) {
     console.error(
-      `Failed to fetch lastest added songs: ${response.message} (status: ${response.status})`,
+      `Failed to fetch latest added songs: ${response.message} (status: ${response.status})`,
     );
     return [];
   }
@@ -29,7 +29,7 @@ export async function getLastestSongs(): Promise<Song[]> {
 }
 
 // Todo : Replace with real API calls
-export async function getLastestUsers(): Promise<User[]> {
+export async function getLatestUsers(): Promise<User[]> {
   const response = await apiFetch<User[]>("/api/users/lastest", {
     method: "GET",
     headers: {

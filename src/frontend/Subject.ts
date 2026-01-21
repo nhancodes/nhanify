@@ -1,9 +1,10 @@
 import { Observer } from "./Observer.js";
+import { GenericEvent } from "./types/apiRouterTypes.js";
 
-export class Subject<TEvent> {
-  private observers: Observer<TEvent>[] = [];
+export class Subject<TEvent extends GenericEvent> {
+  private observers: Observer[] = [];
 
-  addObserver(observer: Observer<TEvent>) {
+  addObserver(observer: Observer) {
     this.observers.push(observer);
   }
 

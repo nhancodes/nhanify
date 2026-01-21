@@ -1,4 +1,5 @@
 import { Playlist, Song, User } from "./types/apiRouterTypes.js";
+import { songQueue } from "./appState.js";
 
 export function renderPlaylists(type: string, playlists: Playlist[]) {
   const parent = document.getElementById("top-playlists-container");
@@ -118,7 +119,31 @@ export function renderSongs(songs: Song[], type: string) {
         ]),
       ]),
     ]);
+    debugger;
+    console.log("Playlist Type in renderSongs:", type);
     card.setAttribute("id", song.id.toString());
+    card.dataset.playlistId = song.playlistId.toString();
+    card.dataset.playlistType = type;
+    card.addEventListener("click", (event) => {
+      console.log("Song card clicked", event.currentTarget);
+      const card = event.currentTarget as HTMLElement;
+      const songId = card.getAttribute("id");
+      const playlistId = card.dataset.playlistId;
+      const playlistType = card.dataset.playlistType;
+      //notify song queue to play this song and send over SongId and PlaylistId
+      if (songId && playlistId) {
+        console.log("Fetching song data for", {
+          songId,
+          playlistId,
+          playlistType,
+        });
+        songQueue.setQueueByPlaylistSongId(
+          parseInt(playlistId),
+          parseInt(songId),
+          playlistType!,
+        );
+      }
+    });
     parent.appendChild(card);
   });
 }

@@ -63,6 +63,10 @@
   background-color: rgb(255 255 255 / 49%);
 }
 
+.txt-center {
+  text-align: center;
+}
+
 .row.right {
   justify-content: flex-end;
 }

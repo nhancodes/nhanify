@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "sourceMap": true,
-    "types": [],
+    "types": ["node", "youtube"],
     "moduleResolution": "node"
   },
   "include": ["src/frontend/**/*.ts"],
