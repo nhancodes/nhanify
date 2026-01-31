@@ -13,10 +13,7 @@ const {
 const { YT_API_KEY } = process.env;
 const { getVidInfo, durationSecsToHHMMSS } = require("../lib/playlist.js");
 const catchError = require("./catch-error.js");
-const {
-  apiAuth,
-  getPlaylist: getPlaylistRoute,
-} = require("./middleware");
+const { apiAuth, getPlaylist: getPlaylistRoute } = require("./middleware");
 const SONGS_PER_PAGE = 100;
 const PAGE_OFFSET = 4;
 let clients = [];
