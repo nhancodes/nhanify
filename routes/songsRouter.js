@@ -14,18 +14,22 @@ const PAGE_OFFSET = 4;
 // Get a playlist.
 songsRouter.get(
   "/:playlistType/playlists/:page/playlist/:pagePl/:playlistId",
-  requireAuth,
   catchError(async (req, res) => {
     const { page, pagePl, playlistType, playlistId } = req.params;
 
     if (Number.isNaN(+playlistId) || !Number.isInteger(+playlistId))
       throw new NotFoundError();
     const persistence = req.app.locals.persistence;
-    const isReadAuth = await persistence.isReadPlaylistAuthorized(
-      +playlistId,
-      req.session.user.id,
-    );
-    if (!isReadAuth) throw new ForbiddenError();
+    const playlistInfo = await persistence.getPlaylist(+playlistId);
+    if (!playlistInfo) throw new NotFoundError();
+    if (playlistInfo.private) {
+      if (!req.session?.user) throw new ForbiddenError();
+      const isReadAuth = await persistence.isReadPlaylistAuthorized(
+        +playlistId,
+        req.session.user.id,
+      );
+      if (!isReadAuth) throw new ForbiddenError();
+    }
     const data = await getPlaylist(
       req.app.locals.persistence,
       SONGS_PER_PAGE,

@@ -3,7 +3,8 @@ import {
   SongQueueEvents,
   Playlist,
   PlaylistSongs,
-  ObservedEventMap,
+  PlayerEvents,
+  CurrentPlaylistEvents,
 } from "./types/apiRouterTypes";
 import { Subject } from "./Subject.js";
 import { Observer } from "./Observer.js";
@@ -37,6 +38,7 @@ export class SongQueue extends Subject<SongQueueEvents> implements Observer {
     } else {
       this.currentSongIndex = 0;
     }
+
     this.currentSong = this.playlistSongs?.songs[this.currentSongIndex] || null;
     console.log({ playlistSongs });
     console.log({
@@ -101,14 +103,19 @@ export class SongQueue extends Subject<SongQueueEvents> implements Observer {
   }
 
   //react when recieving notification
-  update<K extends keyof ObservedEventMap>(event: {
-    event: K;
-    data: ObservedEventMap[K];
-  }) {
+  update(event: PlayerEvents | CurrentPlaylistEvents) {
     console.log("SongQueue received event:", event);
     switch (event.event) {
+      case "shuffledSong":
+        this.shuffleSongs();
+        this.notify({
+          event: "shuffledSongs",
+          data: this.playlistSongs!.songs,
+        });
+        break;
+      case "nextSong":
       case "finishedSong":
-        this.setCurrentSong();
+        this.setNextSong();
         this.notify({
           event: "currentSongChanged",
           data: {
@@ -117,6 +124,7 @@ export class SongQueue extends Subject<SongQueueEvents> implements Observer {
             playlistType: this.playlistType ?? null,
           },
         });
+        console.log("ON CHANGE", this.playlistSongs?.songs);
         break;
 
       case "currentPlaylistChanged":
@@ -132,12 +140,46 @@ export class SongQueue extends Subject<SongQueueEvents> implements Observer {
         }
         break;
 
+      case "previousSong":
+        // Similar handling for previous song if needed
+        console.log("Previous song event received");
+        this.setPreviousSong();
+        this.notify({
+          event: "currentSongChanged",
+          data: {
+            song: this.currentSong!,
+            playlist: this.currentPlaylist!,
+            playlistType: this.playlistType ?? null,
+          },
+        });
+        break;
+
       default:
         break;
     }
   }
-  setCurrentSong() {
+  setNextSong() {
     this.currentSongIndex += 1;
     this.currentSong = this.playlistSongs?.songs[this.currentSongIndex] || null;
+  }
+  setPreviousSong() {
+    this.currentSongIndex -= 1;
+    this.currentSong = this.playlistSongs?.songs[this.currentSongIndex] || null;
+  }
+
+  private shuffleSongs() {
+    if (this.playlistSongs?.songs) {
+      for (let i = 0; i < this.playlistSongs.songs.length; i++) {
+        const tempCurrentSong = this.playlistSongs.songs[i];
+        const max = this.playlistSongs.songs.length;
+        const randomIndex = Math.floor(Math.random() * max);
+        console.log({ randomIndex });
+        console.log(this.playlistSongs.songs);
+        this.playlistSongs.songs[i] = this.playlistSongs.songs[randomIndex];
+        this.playlistSongs.songs[randomIndex] = tempCurrentSong;
+      }
+    } else {
+      console.log("No songs in queue");
+    }
   }
 }

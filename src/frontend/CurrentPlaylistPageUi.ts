@@ -1,10 +1,7 @@
 import { Observer } from "./Observer.js";
 import { Subject } from "./Subject.js";
-import {
-  CurrentPlaylistEvents,
-  ObservedEventMap,
-  ObservedEvents,
-} from "./types/apiRouterTypes";
+import { CurrentPlaylistEvents, SongQueueEvents } from "./types/apiRouterTypes";
+import { renderSongs } from "./UiRender.js";
 
 export class CurrentPlaylistPageUi
   extends Subject<CurrentPlaylistEvents>
@@ -12,22 +9,25 @@ export class CurrentPlaylistPageUi
 {
   private currentPlaylistId: number | null;
   private previousHiglightedElement: HTMLElement | null = null;
+  private songsContainerEl: HTMLElement | null;
   constructor() {
     console.log("Initializing CurrentPlaylistPageUi");
     super();
     this.currentPlaylistId = null;
+    this.songsContainerEl = document.getElementById("recent-songs-container");
   }
   setCurrentPlaylistId(playlistId: number) {
     console.log("Setting current playlist ID to:", playlistId);
     this.currentPlaylistId = playlistId;
     this.notify({ event: "currentPlaylistChanged" });
   }
-  update<K extends keyof ObservedEventMap>(event: {
-    event: K;
-    data: ObservedEventMap[K];
-  }) {
+  update(event: SongQueueEvents) {
     console.log("CurrentPlaylistPageUi received event:", event);
     switch (event.event) {
+      case "shuffledSongs":
+        this.songsContainerEl!.innerHTML = "";
+        renderSongs(event.data, "your");
+        break;
       case "currentSongChanged":
       case "currentSongOnPlayer":
         if (!event.data) {

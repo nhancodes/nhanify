@@ -1,5 +1,6 @@
 import { Playlist, Song, User } from "./types/apiRouterTypes.js";
 import { songQueue } from "./appState.js";
+import { getPlaylistSongs } from "./api.js";
 
 export function renderPlaylists(type: string, playlists: Playlist[]) {
   const parent = document.getElementById("top-playlists-container");
@@ -43,13 +44,44 @@ export function renderPlaylists(type: string, playlists: Playlist[]) {
       playlist.id,
       playlist.totalLikes,
     );
-    const thumbnail = createElement("a", "thumbnail t-medium", []);
+    const menu = createDropdownActionsMenu();
     const top = createElement("div", "top-card", [cardInfo]);
-    const card = createElement("div", "card", [thumbnail, actions, top]);
+    const description = createElement("div", "description", [top, actions]);
+    const playIcon = createElement("i", "fas fa-play");
+    const playContainer = createElement("div", "rating-container", [playIcon]);
+    const rightContainer = createElement("div", "right-container", [
+      menu,
+      playContainer,
+    ]);
+    const thumbnail = createElement("a", "thumbnail t-medium", [
+      description,
+      rightContainer,
+    ]);
+    const card = createElement("div", "card", [thumbnail]);
     thumbnail.setAttribute(
       "href",
       `/${type}/playlists/1/playlist/1/${playlist.id}`,
     );
+    playIcon.dataset.dataApi = `/api/${type}/playlists/1/playlist/1/${playlist.id}`;
+    playIcon.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      //const card = event.currentTarget as HTMLElement;
+      console.log("Play icon clicked for playlist", playlist.id);
+      const path = `/api/${type}/playlists/1/playlist/1/${playlist.id}`;
+      console.log("Api Fetch data for playlist", path);
+      try {
+        const data = await getPlaylistSongs(path);
+        if (!data) {
+          console.warn("No playlist data found for", path);
+          return;
+        }
+        console.log("Fetched data:", data);
+        songQueue.setQueue(data);
+      } catch (err) {
+        console.error("Failed to fetch playlist data for", path, err);
+      }
+    });
     parent.appendChild(card);
   });
 }
@@ -60,15 +92,15 @@ function createActions(
   playlistId: number,
   totalLikes?: number,
 ) {
-  const menu = createDropdownActionsMenu();
-  const playIcon = createElement("i", "fas fa-play");
-  const playContainer = createElement("div", "rating-container", [playIcon]);
+  //const menu = createDropdownActionsMenu();
+  //const playIcon = createElement("i", "fas fa-play");
+  //const playContainer = createElement("div", "rating-container", [playIcon]);
   const actions = createElement("div", "playButton", [
     createLikeAction(totalLikes),
-    playContainer,
-    menu,
+    // playContainer,
+    // menu,
   ]);
-  playIcon.dataset.dataApi = `/api/${type}/playlists/1/playlist/1/${playlistId}`;
+  //playIcon.dataset.dataApi = `/api/${type}/playlists/1/playlist/1/${playlistId}`;
   return actions;
 }
 
@@ -103,23 +135,27 @@ export function renderSongs(songs: Song[], type: string) {
       song.totalLikes,
     );
     const thumbnail = createElement("div", "thumbnail t-small", []);
-    const songTitle = createElement("p", "bold", [song.title]);
-    const songCard = createInfo("", [
+    //const songTitle = createElement("p", "bold", [song.title]);
+    const songCard = createInfo(song.title, [
       {
         text: song.creator?.username ? song.creator.username : "",
         link: "link",
       },
     ]);
-    const card = createElement("div", "card", [
+    const menu = createDropdownActionsMenu();
+    const card = createElement("div", "card-info-container", [
       createElement("div", "top-card", [
         thumbnail,
         createElement("div", "info-actions-container", [
-          songTitle,
-          createElement("div", "info-actions", [songCard, actions]),
+          //songTitle,
+          createElement("div", "info-actions", [
+            createElement("div", "description", [songCard, actions]),
+            //add dropdown menu here
+            menu,
+          ]),
         ]),
       ]),
     ]);
-    debugger;
     console.log("Playlist Type in renderSongs:", type);
     card.setAttribute("id", song.id.toString());
     card.dataset.playlistId = song.playlistId.toString();
@@ -149,25 +185,43 @@ export function renderSongs(songs: Song[], type: string) {
 }
 
 function createDropdownActionsMenu() {
-  return createElement("details", `profileMenu`, [
-    createElement("summary", undefined, [
-      createElement("i", "fas fa-ellipsis-v"),
+  // build elements manually so we can attach stopPropagation handlers
+  const details = createElement(
+    "details",
+    `profileMenu`,
+    [],
+  ) as HTMLDetailsElement;
+  const summary = createElement("summary", undefined, [
+    createElement("i", "fas fa-ellipsis-v"),
+  ]) as HTMLElement;
+
+  const profileDropdown = createElement("div", "profileDropdown", [
+    createElement("div", "menuItem", [
+      createElement("i", "fas fa-comment"),
+      createElement("p", undefined, ["Comments"]),
     ]),
-    createElement("div", "profileDropdown", [
-      createElement("div", "menuItem", [
-        createElement("i", "fas fa-comment"),
-        createElement("p", undefined, ["Comments"]),
-      ]),
-      createElement("div", "menuItem", [
-        createElement("i", "fas fa-share-alt"),
-        createElement("p", undefined, ["Share"]),
-      ]),
-      createElement("div", "menuItem", [
-        createElement("i", "fas fa-plus"),
-        createElement("p", undefined, ["Add to Playlist"]),
-      ]),
+    createElement("div", "menuItem", [
+      createElement("i", "fas fa-share-alt"),
+      createElement("p", undefined, ["Share"]),
+    ]),
+    createElement("div", "menuItem", [
+      createElement("i", "fas fa-plus"),
+      createElement("p", undefined, ["Add to Playlist"]),
     ]),
   ]);
+
+  details.appendChild(summary);
+  details.appendChild(profileDropdown);
+
+  // prevent clicks inside the dropdown (including the summary toggle) from bubbling up to the card
+  const stop = (e: Event) => {
+    e.stopPropagation();
+  };
+  summary.addEventListener("click", stop);
+  summary.addEventListener("mousedown", stop); // guard against mousedown before click
+  profileDropdown.addEventListener("click", stop);
+
+  return details;
 }
 
 function createLikeAction(totalLikes?: number) {
@@ -189,9 +243,9 @@ export function createInfo(title: string, subtitles: Record<string, string>[]) {
   const subsWithDots: (HTMLElement | string)[] = subs.flatMap((s, i) =>
     i < subs.length - 1 ? [s, " • "] : [s],
   );
-  return createElement("div", "card", [
+  return createElement("div", "card-info-container", [
     createElement("div", "card-info", [
-      createElement("p", "bold", [title]),
+      createElement("h3", "", [title]),
       createElement("p", undefined, subsWithDots),
     ]),
   ]);
@@ -218,7 +272,6 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
       }
     }
   }
-
   return el;
 }
 type Subtitle = {

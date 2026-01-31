@@ -58,24 +58,6 @@ window.addEventListener("click", async (event) => {
 
 async function loadAndRender(path: string, push = true, pathType?: string) {
   if (pathType && pathType === "data-api") {
-    if (
-      /^\/api\/(your|anonPublic|contribution|public)\/playlists\/\d+\/playlist\/\d+\/\d+/.test(
-        path,
-      )
-    ) {
-      console.log("Api Fetch data for playlist", path);
-      try {
-        const data = await getPlaylistSongs(path);
-        if (!data) {
-          console.warn("No playlist data found for", path);
-          return;
-        }
-        console.log("Fetched data:", data);
-        songQueue.setQueue(data);
-      } catch (err) {
-        console.error("Failed to fetch playlist data for", path, err);
-      }
-    }
   } else if (pathType && pathType === "href") {
     const partial = await getPartial(path);
     document.querySelector("main")!.innerHTML = partial;
@@ -98,7 +80,6 @@ async function loadAndRender(path: string, push = true, pathType?: string) {
       console.log("Rendering playlist songs:", songs);
       renderPlaylists(playlistType, playlists);
       renderSongs(songs, playlistType);
-      debugger;
       currentPlaylistPageUi.setCurrentPlaylistId(playlists[0].id);
     } else if (path.includes("/home")) {
       const { latestSongs, latestUsers, topPlaylists, playlistType } = data;

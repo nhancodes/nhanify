@@ -1,26 +1,29 @@
 .footer
-	.col#player-container
-		#iframe-container
-			.iframeDiv
-				#player
-		.row
-			.col
-				#progress-container
-					#progress-bar
-				.row.right
-					p#progress-time 0:00/5:00
-		.row.center
-			.col.gap
-				p#player-title Song Title
-				a#player-playlist-link(href="")
-					p(id="player-playlist" class="p txt-center") Playlist Name
-				p#player-username User Name
-		.row
-			#left
-				i.fa-solid.fa-volume-up#volume
-			#center
-				i.fa-solid.fa-backward-step#previous
-				i.fa-solid.fa-play#play-resume
-				i.fa-solid.fa-forward-step#next
-			#right
-				i.fa-solid.fa-shuffle#shuffleIcon
+  .col#player-container
+    #iframe-container
+      .iframeDiv
+        #player
+    .row
+      .col
+        #progress-container
+          #progress-bar
+        .row.right
+          p#progress-time 0:00/0:00
+    .row.center
+      .col.gap
+        p#player-title Song Title
+        a#player-playlist-link(href="")
+          p(id="player-playlist" class="p txt-center") Playlist Name
+        p#player-username User Name
+    .row
+      #left
+        i.fa-solid.fa-volume-up#volume
+      #center
+        .rating-container
+          i.fa-solid.fa-backward-step#previous
+        .rating-container
+          i.fa-solid.fa-play#play-pause
+        .rating-container
+          i.fa-solid.fa-forward-step#next
+      #right
+        i.fa-solid.fa-shuffle#shuffle-icon

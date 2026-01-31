@@ -39,12 +39,16 @@ export interface CurrentSong {
 
 export type SongQueueEvents =
   | { event: "currentSongChanged"; data: CurrentSong }
+  | { event: "shuffledSongs"; data: Song[] }
   | { event: "currentSongOnPlayer"; data: CurrentSong };
 
 export type PlayerEvents =
   | { event: "finishedSong"; data?: never }
   | { event: "pauseSong"; data?: never }
-  | { event: "playSong"; data?: never };
+  | { event: "playSong"; data?: never }
+  | { event: "nextSong"; data?: never }
+  | { event: "shuffledSong"; data?: never }
+  | { event: "previousSong"; data?: never };
 export type CurrentPlaylistEvents = {
   event: "currentPlaylistChanged";
   data?: never;
@@ -60,7 +64,9 @@ export type GenericEvent = {
   data?: unknown;
 };
 
-type EventUnionToMap<T extends GenericEvent> = {
+/*type EventUnionToMap<T extends GenericEvent> = {
   [E in T as E["event"]]: E["data"];
 };
+
 export type ObservedEventMap = EventUnionToMap<ObservedEvents>;
+*/

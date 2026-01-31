@@ -17,10 +17,15 @@
 }
 
 #progress-bar {
-  width: 50%;
+  width: 0%;
   height: 5px;
   background-color: red;
   border-radius: 5px;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 #progress-container {

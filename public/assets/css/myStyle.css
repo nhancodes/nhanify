@@ -5,7 +5,7 @@ html {
 
 :root {
   --color-bg-dark: #f5f5f0;
-  --color-bg-light: #fefefe;
+  --color-bg-light: #f7f7f7;
   --color-tertiary: #e8e8e3;
   --color-secondary: #c9c9c4;
   --color-primary: #8b9d83;
@@ -42,7 +42,6 @@ body {
     "SF Pro Text", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   font-size: 1rem;
   text-align: center;
-  background-color: var(--color-bg-dark);
   color: var(--color-text);
   max-height: 100dvh;
   min-height: 100dvh;
