@@ -468,61 +468,68 @@ VALUES
 
 --insert songs into the songs table
 INSERT INTO
-  songs (title, video_id, playlist_id, creator_id)
+  songs (title, video_id, playlist_id, creator_id, duration_sec)
 VALUES
-  ('Chilling In Tokyo', 'y7qZFji19Rg', 1, 1),
-  ('Good Days', 'L9VcK_pT1Y4', 1, 1),
-  ('Just With My Guitar', 'M0ecZFXs-VM', 1, 1),
-  ('Spring Nights', 'InZxeDWR-hQ', 1, 1),
-  ('Eternal Youth', '_BWPNPtsZm8', 1, 1),
-  ('Blankets', 'HdXrkgZP438', 1, 1),
-  ('Dreaming', 'DFVuYoDVS_g', 1, 2),
-  ('Pink - Raise Your Glass', 'XjVNlG5cZyQ', 2, 2),
+  ('Chilling In Tokyo', 'y7qZFji19Rg', 1, 1, 319),
+  ('Good Days', 'L9VcK_pT1Y4', 1, 1, 152),
+  ('Just With My Guitar', 'M0ecZFXs-VM', 1, 1, 180),
+  ('Spring Nights', 'InZxeDWR-hQ', 1, 1, 180),
+  ('Eternal Youth', '_BWPNPtsZm8', 1, 1, 206),
+  ('Blankets', 'HdXrkgZP438', 1, 1, 214),
+  ('Dreaming', 'DFVuYoDVS_g', 1, 2, 285),
+  ('Pink - Raise Your Glass', 'XjVNlG5cZyQ', 2, 2, 203),
   (
     'Kudasaibeats - The Girl I Haven''t Met',
     'XDpoBc8t6gE',
     7,
-    3
+    3,
+    180
   ),
   (
     'Miley Cyrus - Party In The USA',
     'M11SvDtPBhA',
     4,
-    4
+    4,
+    180
   ),
-  ('Mad Animal - L.A. Dreamin', 'leannVmCjeo', 5, 5),
+  ('Mad Animal - L.A. Dreamin', 'leannVmCjeo', 5, 5, 180),
   (
     'Christmas, Why Can''t Find You?',
     'T-urD17dbDU',
     6,
-    6
+    6,
+    180
   ),
   (
     'The Darkness - Love is Only a Feeling',
     'QSGa1dW_KoE',
     7,
-    6
+    6,
+    180
   ),
-  ('Blue Heart', 'Dui7KB8y-Ro', 7, 6),
+  ('Blue Heart', 'Dui7KB8y-Ro', 7, 6, 180),
   (
     'Chúng Ta Không Thuộc Về Nhau',
     'qGRU3sRbaYw',
     7,
-    1
+    1,
+    180
   ),
   (
     'Jacob Collier - Little Blue',
     'IQvzX0Z3HE4',
     7,
-    2
+    2,
+    180
   ),
-  ('Stick Figure - Paradise', 'qvzFphdCYHo', 7, 3),
-  ('Queen - Under Pressure', 'a01QQZyl-_I', 7, 4),
-  ('Watermelon Man', '_QkGAaYtXA0', 7, 5),
-  ('XX-Intro', 'QbwdJl8TGeY', 7, 1),
+  ('Stick Figure - Paradise', 'qvzFphdCYHo', 7, 3, 180),
+  ('Queen - Under Pressure', 'a01QQZyl-_I', 7, 4, 180),
+  ('Watermelon Man', '_QkGAaYtXA0', 7, 5, 180),
+  ('XX-Intro', 'QbwdJl8TGeY', 7, 1, 180),
   (
     'Should I Stay or Should I Go',
     'BN1WwnEDWAM',
     7,
-    1
+    1,
+    180
   );
