@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+    container_name: my_app
+    environment:
+      - PG_DATABASE=${PG_DATABASE}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_HOST=db
+      - PG_PORT=${PG_PORT}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
+    command: >
+      sh -c "
+      npm install &&
+      echo 'Waiting for PostgreSQL...' &&
+      sleep 10 &&
+      until PGPASSWORD=$$PG_PASSWORD psql -h $$PG_HOST -p $$PG_PORT -U $$PG_USER -d $$PG_DATABASE -c 'SELECT 1' >/dev/null 2>&1; do
+        echo 'Still waiting...'
+        sleep 2
+      done &&
+      PGPASSWORD=$$PG_PASSWORD psql -h $$PG_HOST -p $$PG_PORT -U $$PG_USER -d $$PG_DATABASE -f lib/schema.sql &&
+      PGPASSWORD=$$PG_PASSWORD psql -h db -p $$PG_PORT -U $$PG_USER -d $$PG_DATABASE -f lib/seed.sql &&
+      npm start
+      "
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
