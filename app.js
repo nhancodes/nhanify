@@ -92,5 +92,5 @@ app.use((err, req, res, _next) => {
 });
 
 app.listen(PORT, HOST, () => {
-  console.log(`🎵 Nhanify music ready to rock on http://${HOST}:${PORT} 🎵`);
+  console.log(`🎵 Nhanify music ready to rock on http://localhost:${PORT} 🎵`);
 });

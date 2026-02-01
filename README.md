@@ -13,9 +13,16 @@
 5. **Configure Environment**:
    - Copy `.env.example` to `.env`.
    - Update DB details in `.env`.
-6. **Setup DB**: Run `psql -d <databasename> < lib/schema_data.sql` to load schema and seed data.
-7. **Start App**: Run `npm start`.
-8. **Access**: Open Chrome at the `HOST:PORT` defined in `.env`.
+6. **Setup DB**: Run `psql -d <databasename> < lib/schema.sql` to load schema.
+7. **Seed DB**: Run `psql -d <databasename> < lib/seed.sql` to seed db.
+8. **Start App**: Run `npm start`.
+9. **Access**: Open Chrome at the `HOST:PORT` defined in `.env`.
+
+## Setup using Docker
+
+1. **Docker Install**: Make sure docker desktop is installed and running
+2. **Install & Run**: Run `docker-compose up -d`
+3. **Access**: Open Chrome at the `localhost:3000`.
 
 ## Application Overview
 
