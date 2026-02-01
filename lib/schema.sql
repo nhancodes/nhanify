@@ -30,6 +30,7 @@ CREATE TABLE songs (
   video_id text NOT NULL,
   playlist_id integer NOT NULL REFERENCES playlists (id) ON DELETE CASCADE,
   creator_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  duration_sec integer,
   CONSTRAINT unique_video_id_playlist_id UNIQUE (playlist_id, video_id),
   CONSTRAINT unique_title_playlist_id UNIQUE (playlist_id, title)
 );
