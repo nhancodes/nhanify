@@ -1,2 +1,0 @@
-ALTER TABLE users
-ADD COLUMN twitch_id VARCHAR(50) UNIQUE;

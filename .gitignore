@@ -1,8 +1,4 @@
-.vscode/
-session-store.db
-*.swp
-.psql_history
 .env
 node_modules/
-backup.sql
 .idea/
+.vscode/

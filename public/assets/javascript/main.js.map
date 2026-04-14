@@ -1,1 +1,0 @@
-{"version":3,"file":"main.js","sourceRoot":"","sources":["../../../src/frontend/main.ts"],"names":[],"mappings":"AAAA,oBAAoB;AACnB,MAAM,UAAU,aAAa,CAAC,KAAY,EAAE,OAAe;IAC1D,KAAK,CAAC,cAAc,EAAE,CAAC;IACvB,IAAI,OAAO,CAAC,OAAO,CAAC,IAAI,KAAK,CAAC,MAAM,EAAE,CAAC;QACpC,KAAK,CAAC,MAA0B,CAAC,MAAM,EAAE,CAAC;IAC7C,CAAC;AACH,CAAC"}
